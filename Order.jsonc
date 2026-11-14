@@ -1,0 +1,123 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string",
+      "title": "Customer Name"
+    },
+    "customer_email": {
+      "type": "string",
+      "title": "Customer Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "address": {
+      "type": "string",
+      "title": "Delivery Address"
+    },
+    "city": {
+      "type": "string",
+      "title": "City"
+    },
+    "state": {
+      "type": "string",
+      "title": "State"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "title": "Items"
+    },
+    "fulfilment_method": {
+      "type": "string",
+      "enum": [
+        "Pickup",
+        "Logistics Delivery"
+      ],
+      "title": "Fulfilment Method",
+      "default": "Logistics Delivery"
+    },
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal"
+    },
+    "delivery_fee": {
+      "type": "number",
+      "title": "Delivery Fee",
+      "default": 0
+    },
+    "delivery_fee_min": {
+      "type": "number",
+      "title": "Delivery Fee Min (estimate)",
+      "default": 0
+    },
+    "delivery_fee_max": {
+      "type": "number",
+      "title": "Delivery Fee Max (estimate)",
+      "default": 0
+    },
+    "delivery_info_note": {
+      "type": "string",
+      "title": "Delivery Info Note"
+    },
+    "discount": {
+      "type": "number",
+      "title": "Discount",
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Awaiting Payment Confirmation",
+        "Confirmed",
+        "Picked Up",
+        "Delivered",
+        "Canceled"
+      ],
+      "title": "Status",
+      "default": "Awaiting Payment Confirmation"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "Unpaid",
+        "Paid",
+        "Pending"
+      ],
+      "title": "Payment Status",
+      "default": "Unpaid"
+    },
+    "payment_reference": {
+      "type": "string",
+      "title": "Payment Reference"
+    },
+    "payment_confirmation_submitted": {
+      "type": "boolean",
+      "title": "Payment Confirmation Submitted",
+      "default": false
+    },
+    "payment_confirmation_date": {
+      "type": "string",
+      "title": "Payment Confirmation Date"
+    },
+    "coupon_code": {
+      "type": "string",
+      "title": "Coupon Code"
+    }
+  },
+  "required": [
+    "customer_name",
+    "phone",
+    "items",
+    "total"
+  ]
+}

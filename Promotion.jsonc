@@ -1,0 +1,45 @@
+{
+  "name": "Promotion",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "code": {
+      "type": "string",
+      "title": "Coupon Code"
+    },
+    "discount_type": {
+      "type": "string",
+      "enum": [
+        "percentage",
+        "fixed"
+      ],
+      "title": "Discount Type",
+      "default": "percentage"
+    },
+    "discount_value": {
+      "type": "number",
+      "title": "Discount Value",
+      "default": 0
+    },
+    "active": {
+      "type": "boolean",
+      "title": "Active",
+      "default": true
+    },
+    "banner_image": {
+      "type": "string",
+      "title": "Banner Image"
+    }
+  },
+  "required": [
+    "title",
+    "code"
+  ]
+}

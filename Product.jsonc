@@ -1,0 +1,182 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name"
+    },
+    "slug": {
+      "type": "string",
+      "title": "Slug"
+    },
+    "short_description": {
+      "type": "string",
+      "title": "Short Description"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "price": {
+      "type": "number",
+      "title": "Price (NGN)"
+    },
+    "compare_at_price": {
+      "type": "number",
+      "title": "Compare At Price",
+      "default": 0
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "For Her",
+        "For Him",
+        "Unisex",
+        "Signature"
+      ],
+      "title": "Category"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "Women",
+        "Men",
+        "Unisex"
+      ],
+      "title": "Gender"
+    },
+    "fragrance_family": {
+      "type": "string",
+      "enum": [
+        "Fresh",
+        "Sweet",
+        "Woody",
+        "Floral",
+        "Oud",
+        "Spicy",
+        "Citrus",
+        "Musky"
+      ],
+      "title": "Fragrance Family"
+    },
+    "top_notes": {
+      "type": "string",
+      "title": "Top Notes"
+    },
+    "heart_notes": {
+      "type": "string",
+      "title": "Heart Notes"
+    },
+    "base_notes": {
+      "type": "string",
+      "title": "Base Notes"
+    },
+    "size_ml": {
+      "type": "number",
+      "title": "Size (ml)",
+      "default": 100
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Images"
+    },
+    "stock": {
+      "type": "number",
+      "title": "Stock",
+      "default": 0
+    },
+    "featured": {
+      "type": "boolean",
+      "title": "Featured",
+      "default": false
+    },
+    "bestseller": {
+      "type": "boolean",
+      "title": "Bestseller",
+      "default": false
+    },
+    "rating": {
+      "type": "number",
+      "title": "Rating",
+      "default": 5
+    },
+    "review_count": {
+      "type": "number",
+      "title": "Review Count",
+      "default": 0
+    },
+    "occasions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Occasions"
+    },
+    "intensity": {
+      "type": "string",
+      "enum": [
+        "Light",
+        "Moderate",
+        "Intense"
+      ],
+      "title": "Intensity",
+      "default": "Moderate"
+    },
+    "moods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Moods"
+    },
+    "available": {
+      "type": "boolean",
+      "title": "Available",
+      "default": true
+    },
+    "is_bundle": {
+      "type": "boolean",
+      "title": "Is Bundle",
+      "default": false
+    },
+    "bundle_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "title": "Product ID"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "quantity": {
+            "type": "number",
+            "title": "Quantity",
+            "default": 1
+          },
+          "image": {
+            "type": "string",
+            "title": "Image"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          }
+        }
+      },
+      "title": "Bundle Items"
+    }
+  },
+  "required": [
+    "name",
+    "price",
+    "category"
+  ]
+}
