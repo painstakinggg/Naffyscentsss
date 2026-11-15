@@ -10,19 +10,20 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       const response = await fetch("/api/auth/password-reset/request", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to request password reset");
-    } catch {
-      // Always show success regardless
+    } catch (err) {
+      setError(err.message || "Unable to request a password reset.");
     } finally {
       setLoading(false);
-      setSent(true);
     }
   };
 
@@ -43,6 +44,7 @@ export default function ForgotPassword() {
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="space-y-2">
             <Label htmlFor="email">Email address</Label>
             <div className="relative">
