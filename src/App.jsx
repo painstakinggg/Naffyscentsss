@@ -17,6 +17,7 @@ import Contact from './pages/Contact';
 import InfoPage from './pages/InfoPage';
 import LeaveReview from './pages/LeaveReview';
 import Admin from './pages/Admin';
+import AdminSetup from './pages/AdminSetup';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -77,6 +78,7 @@ const AuthenticatedApp = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin-setup" element={<AdminSetup />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </QuickViewProvider>
