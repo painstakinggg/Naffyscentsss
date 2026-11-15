@@ -3,10 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
 import { useStore } from "@/lib/store-context";
 import { formatNaira } from "@/lib/images";
-import { Check, Lock, Truck, MessageCircle, ArrowLeft, ShoppingBag, MapPin, CreditCard, ChevronDown } from "lucide-react";
+import { Check, Lock, Truck, MessageCircle, ShoppingBag, MapPin, CreditCard, ChevronDown } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
-const LOGO_URL = "/favicon.svg";
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
   "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT - Abuja", "Gombe",
@@ -202,13 +201,7 @@ export default function Checkout() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-9 text-center">
           <h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Checkout</h1>
-          <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-[0.12em] sm:gap-6">
-            <Step number="01" label="Bag" active />
-            <div className="h-px w-8 bg-stone-300 sm:w-16" />
-            <Step number="02" label="Details" active />
-            <div className="h-px w-8 bg-stone-300 sm:w-16" />
-            <Step number="03" label="Payment" />
-          </div>
+
         </div>
 
         <form onSubmit={placeOrder} className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_370px] lg:gap-8">
@@ -300,9 +293,6 @@ export default function Checkout() {
   );
 }
 
-function Step({ number, label, active }) {
-  return <div className={`flex items-center gap-2 ${active ? "text-[#762d38]" : "text-stone-400"}`}><span className={`flex h-7 w-7 items-center justify-center rounded-full border text-[10px] ${active ? "border-[#762d38] bg-[#762d38] text-white" : "border-stone-300"}`}>{number}</span><span>{label}</span></div>;
-}
 
 function SectionHeading({ icon, title, subtitle }) {
   return <div className="mb-5 flex items-start gap-3"><span className="rounded-md bg-[#762d38]/[0.07] p-2 text-[#762d38]">{icon}</span><div><h2 className="font-heading text-xl text-stone-900">{title}</h2><p className="mt-1 text-xs text-stone-500">{subtitle}</p></div></div>;
