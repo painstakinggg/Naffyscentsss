@@ -3,7 +3,6 @@ export async function onRequestGet({env}) {
  try { const r=await env.DB.prepare("SELECT id,product_id,product_name,customer_name,rating,review,location,verified,created_at FROM reviews WHERE featured=1 AND (approved=1 OR status='Approved') ORDER BY created_at DESC LIMIT 12").all(); return json({reviews:(r.results||[]).map(x=>({...x,verified:Boolean(x.verified)}))}); }
  catch { return json({error:"Unable to load reviews"},500); }
 }
-import {json} from "./_auth.js";
 export async function onRequestPost({request,env}) {
  let b;try{b=await request.json()}catch{return json({error:"Invalid request"},400)}
  const name=String(b.customer_name||"").trim().slice(0,120),review=String(b.review||"").trim().slice(0,3000),rating=Number(b.rating),email=String(b.email||"").trim().toLowerCase().slice(0,254),orderNumber=String(b.order_number||"").trim().toUpperCase().slice(0,8);
