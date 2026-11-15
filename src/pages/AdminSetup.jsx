@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { KeyRound, Lock, Mail, Loader2, ShieldCheck } from "lucide-react";
+import { KeyRound, Lock, Mail, Loader2, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import { useAuth } from "@/lib/AuthContext";
 
@@ -13,6 +13,8 @@ export default function AdminSetup() {
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -69,12 +71,20 @@ export default function AdminSetup() {
           <Label htmlFor="admin-password">Create password</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            <Input id="admin-password" type="password" autoComplete="new-password" minLength={12} maxLength={128} placeholder="At least 12 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 pl-10" required />
+            <Input id="admin-password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={12} maxLength={128} placeholder="At least 12 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12 pl-10 pr-10" required />
+            <Button type="button" variant="ghost" size="icon" aria-label={showPassword ? "Hide password" : "Show password"} onClick={() => setShowPassword((visible) => !visible)} className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:text-foreground">
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
           </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="confirm-password">Confirm password</Label>
-          <Input id="confirm-password" type="password" autoComplete="new-password" minLength={12} maxLength={128} placeholder="Enter the password again" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="h-12" required />
+          <div className="relative">
+            <Input id="confirm-password" type={showConfirmPassword ? "text" : "password"} autoComplete="new-password" minLength={12} maxLength={128} placeholder="Enter the password again" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="h-12 pr-10" required />
+            <Button type="button" variant="ghost" size="icon" aria-label={showConfirmPassword ? "Hide password" : "Show password"} onClick={() => setShowConfirmPassword((visible) => !visible)} className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-muted-foreground hover:text-foreground">
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
         <Button type="submit" className="h-12 w-full font-medium" disabled={loading || !token || !password || !confirmPassword}>
           {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Creating administrator...</> : "Create administrator account"}
