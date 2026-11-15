@@ -67,3 +67,10 @@ export const publicUser = (user) => user ? ({
 export function validEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
 }
+
+export async function requireAdmin(request, db) {
+  const user = await currentUser(request, db);
+  if (!user) return { user: null, response: json({ error: "Authentication required" }, 401) };
+  if (user.role !== "admin") return { user: null, response: json({ error: "Administrator access required" }, 403) };
+  return { user, response: null };
+}
