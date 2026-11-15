@@ -344,3 +344,57 @@ body .glass-strong { background: rgba(255, 255, 255, 0.96) !important; }
   .newsletter-panel { border-radius: 14px; padding-left: 1.25rem; padding-right: 1.25rem; }
   .newsletter-panel::before { inset: 9px; }
 }
+
+
+/* Naffy Inner Circle newsletter layout */
+.newsletter-inner-circle {
+  background: #F8F5F0;
+  border: 1px solid #E8E1DA;
+  box-shadow: 0 18px 55px rgba(48, 35, 30, 0.08);
+}
+.newsletter-inner-circle::before { display: none; }
+.newsletter-header {
+  background: #282321;
+  color: #FFF9F4;
+}
+.newsletter-brandline {
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid rgba(232, 198, 182, 0.3);
+  color: #E8C9B7;
+}
+.newsletter-header .newsletter-kicker { color: #D8B6A7; }
+.newsletter-header h2 { color: #FFF9F4 !important; }
+.newsletter-header p { color: #E7DCD5 !important; }
+.newsletter-signup {
+  background: #F8F5F0;
+}
+.newsletter-signup .newsletter-note { color: #958981 !important; }
+.newsletter-signup .newsletter-form input {
+  color: #27211F;
+  background: #FFFFFF;
+  border: 1px solid #DED4CC;
+}
+.newsletter-signup .newsletter-form input::placeholder { color: #8C817A; opacity: 1; }
+.newsletter-signup .newsletter-form input:focus {
+  border-color: #914A4A;
+  box-shadow: 0 0 0 3px rgba(145, 74, 74, 0.12);
+}
+.newsletter-signup .newsletter-submit {
+  color: #FFFFFF;
+  background: #914A4A;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.newsletter-signup .newsletter-submit:hover { background: #783B40; transform: translateY(-1px); }
+.newsletter-signup .newsletter-success {
+  color: #57413A;
+  background: #FFFFFF;
+  border: 1px solid #DED4CC;
+}
+@media (max-width: 640px) {
+  .newsletter-brandline { align-items: flex-start; }
+  .newsletter-brandline span:last-child { text-align: right; }
+}
