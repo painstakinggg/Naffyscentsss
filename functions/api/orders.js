@@ -24,13 +24,18 @@ export async function onRequestPost({request,env}) {
    discount=promo.discount_type==="percentage"?Math.round(subtotal*Number(promo.discount_value)/100):Number(promo.discount_value);
    discount=Math.min(subtotal,Math.max(0,discount));couponCode=promo.code;
   }
-  const settings=await env.DB.prepare("SELECT delivery_fee_ilaro_min,delivery_fee_ilaro_max,logistics_provider FROM store_settings ORDER BY updated_at DESC LIMIT 1").first();
-  const min=method==="Pickup"?0:Number(settings?.delivery_fee_ilaro_min??1000),max=method==="Pickup"?0:Number(settings?.delivery_fee_ilaro_max??2000);
+  const settings=await env.DB.prepare("SELECT delivery_fee_ilaro_min,delivery_fee_ilaro_max,delivery_fee_lagos,delivery_fee_nationwide,logistics_provider FROM store_settings ORDER BY updated_at DESC LIMIT 1").first();
+  const zone=String(b.delivery_zone||"ilaro");
+  const min=method==="Pickup"?0:zone==="lagos"?Number(settings?.delivery_fee_lagos??2500):zone==="nationwide"?Number(settings?.delivery_fee_nationwide??4500):Number(settings?.delivery_fee_ilaro_min??1000);
+  const max=method==="Pickup"?0:zone==="lagos"?min:zone==="nationwide"?min:Number(settings?.delivery_fee_ilaro_max??2000);
   const total=Math.max(0,subtotal-discount);
   const id=crypto.randomUUID();
-  const row={id,customer_name:name,customer_email:method==="Pickup"?"":String(b.customer_email||"").trim().slice(0,254),phone,address:method==="Pickup"?"":String(b.address||"").trim().slice(0,500),city:method==="Pickup"?"":String(b.city||"").trim().slice(0,120),state:method==="Pickup"?"":String(b.state||"").trim().slice(0,120),items,fulfilment_method:method,subtotal,delivery_fee:0,delivery_fee_min:min,delivery_fee_max:max,delivery_info_note:method==="Pickup"?"":`Delivery within Ilaro: ₦${min} – ₦${max} via ${settings?.logistics_provider||"Josh Logistics"}`,discount,total,status:"Awaiting Payment Confirmation",payment_status:"Unpaid",coupon_code:couponCode};
+  const zoneLabel=zone==="lagos"?"Lagos":zone==="nationwide"?"Nationwide":"Ilaro and nearby";
+  const row={id,customer_name:name,customer_email:method==="Pickup"?"":String(b.customer_email||"").trim().slice(0,254),phone,address:method==="Pickup"?"":String(b.address||"").trim().slice(0,500),city:method==="Pickup"?"":String(b.city||"").trim().slice(0,120),state:method==="Pickup"?"":String(b.state||"").trim().slice(0,120),items,fulfilment_method:method,subtotal,delivery_fee:0,delivery_fee_min:min,delivery_fee_max:max,delivery_info_note:method==="Pickup"?"":`Delivery estimate for ${zoneLabel}: ₦${min}${max!==min?" – ₦"+max:""} via ${settings?.logistics_provider||"Josh Logistics"}`,discount,total,status:"Awaiting Payment Confirmation",payment_status:"Unpaid",coupon_code:couponCode};
   await env.DB.prepare("INSERT INTO orders (id,customer_name,customer_email,phone,address,city,state,items,fulfilment_method,subtotal,delivery_fee,delivery_fee_min,delivery_fee_max,delivery_info_note,discount,total,status,payment_status,coupon_code) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
    .bind(id,row.customer_name,row.customer_email,row.phone,row.address,row.city,row.state,JSON.stringify(items),method,subtotal,0,min,max,row.delivery_info_note,discount,total,row.status,row.payment_status,couponCode).run();
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS order_checkout_details (order_id TEXT PRIMARY KEY, apartment TEXT, postal_code TEXT, customer_instructions TEXT, delivery_zone TEXT, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)").run();
+  await env.DB.prepare("INSERT INTO order_checkout_details (order_id,apartment,postal_code,customer_instructions,delivery_zone) VALUES (?,?,?,?,?)").bind(id,String(b.apartment||"").slice(0,160),String(b.postal_code||"").slice(0,40),String(b.customer_instructions||"").slice(0,1000),method==="Pickup"?"pickup":zone).run();
   return json({order:row},201);
  }catch{return json({error:"Could not place order. Please try again."},500)}
 }
