@@ -22,7 +22,8 @@ export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
   const { settings } = useStore();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ customer_name: "", customer_email: "", phone: "", address: "", city: "", state: "Lagos" });
+  const [form, setForm] = useState({ customer_name: "", customer_email: "", phone: "", address: "", apartment: "", postal_code: "", customer_instructions: "", city: "", state: "Lagos" });
+  const [deliveryZone, setDeliveryZone] = useState("ilaro");
   const [fulfilment, setFulfilment] = useState("delivery");
   const isPickup = fulfilment === "pickup";
   const [coupon, setCoupon] = useState("");
@@ -73,7 +74,11 @@ export default function Checkout() {
         body: JSON.stringify({
           ...form,
           customer_email: isPickup ? "" : form.customer_email,
-          address: isPickup ? "" : form.address,
+          address: isPickup ? "" : [form.address, form.apartment].filter(Boolean).join(", "),
+          apartment: isPickup ? "" : form.apartment,
+          postal_code: isPickup ? "" : form.postal_code,
+          customer_instructions: form.customer_instructions,
+          delivery_zone: deliveryZone,
           city: isPickup ? "" : form.city,
           state: isPickup ? "" : form.state,
           items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, size_ml: i.size_ml, quantity: i.quantity, image: i.image })),
@@ -246,10 +251,18 @@ export default function Checkout() {
               ) : (
                 <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2"><label className={labelClass}>Street address *</label><input className={inputClass} autoComplete="street-address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="House number, street and area" required /></div>
+                  <div><label className={labelClass}>Apartment / suite <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} value={form.apartment} onChange={(e) => setForm({ ...form, apartment: e.target.value })} placeholder="Apartment, suite or unit" /></div>
+                  <div><label className={labelClass}>Postal code <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} placeholder="Postal code" /></div>
                   <div><label className={labelClass}>City *</label><input className={inputClass} autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Your city" required /></div>
                   <div><label className={labelClass}>State *</label><select className={inputClass} autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })}>{NIGERIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}</select></div>
+                  <div className="sm:col-span-2"><label className={labelClass}>Delivery destination</label><select className={inputClass} value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)}><option value="ilaro">Ilaro and nearby</option><option value="lagos">Lagos</option><option value="nationwide">Other states (nationwide)</option></select></div>
                 </div>
               )}
+            </section>
+
+            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+              <SectionHeading icon={<MessageCircle size={17} />} title="Customer instructions" subtitle="Optional notes for preparing or delivering your order." />
+              <textarea className={inputClass + " min-h-[96px] resize-y"} value={form.customer_instructions} onChange={(e) => setForm({ ...form, customer_instructions: e.target.value })} placeholder="Add any special instructions…" />
             </section>
 
             <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
