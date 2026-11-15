@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { useStore } from "@/lib/store-context";
 import { Save, Plus, Trash2 } from "lucide-react";
 
@@ -17,8 +17,8 @@ export default function AdminSettings() {
   useEffect(() => {
     (async () => {
       try {
-        const list = await base44.entities.Promotion.list("-created_date", 50);
-        setPromotions(list || []);
+        const data = await apiGet("/admin/promotions");
+        setPromotions(data.promotions || []);
       } catch (e) {}
     })();
   }, []);
@@ -27,11 +27,8 @@ export default function AdminSettings() {
     e.preventDefault();
     setSaving(true);
     try {
-      if (form.id) {
-        await base44.entities.StoreSettings.update(form.id, form);
-      } else {
-        await base44.entities.StoreSettings.create(form);
-      }
+      const response = await fetch("/api/store-settings", { method: "PUT", credentials: "include", headers: { "content-type": "application/json" }, body: JSON.stringify(form) });
+      if (!response.ok) throw new Error("Could not save settings");
       reload();
       alert("Settings saved");
     } catch (err) {
@@ -43,24 +40,24 @@ export default function AdminSettings() {
   const addPromo = async (e) => {
     e.preventDefault();
     try {
-      await base44.entities.Promotion.create(newPromo);
+      await apiPost("/admin/promotions", newPromo);
       setNewPromo({ title: "", code: "", discount_type: "percentage", discount_value: 10, active: true });
-      const list = await base44.entities.Promotion.list("-created_date", 50);
-      setPromotions(list || []);
+      const data = await apiGet("/admin/promotions");
+      setPromotions(data.promotions || []);
     } catch (err) {
       alert("Could not create promotion");
     }
   };
 
   const togglePromo = async (p) => {
-    await base44.entities.Promotion.update(p.id, { active: !p.active });
+    await apiPatch(`/admin/promotions/${p.id}`, { active: !p.active });
     const list = await base44.entities.Promotion.list("-created_date", 50);
     setPromotions(list || []);
   };
 
   const removePromo = async (p) => {
     if (!confirm("Delete this promotion?")) return;
-    await base44.entities.Promotion.delete(p.id);
+    await apiDelete(`/admin/promotions/${p.id}`);
     const list = await base44.entities.Promotion.list("-created_date", 50);
     setPromotions(list || []);
   };
