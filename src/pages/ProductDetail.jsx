@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { useCart } from "@/lib/cart-context";
 import { useQuickView } from "@/lib/quickview-context";
 import { formatNaira } from "@/lib/images";
@@ -25,16 +24,17 @@ export default function ProductDetail() {
     (async () => {
       setLoading(true);
       try {
-        const p = await base44.entities.Product.get(id);
+        const response = await fetch(`/api/products/${encodeURIComponent(id)}`);
+        if (!response.ok) {
+          throw new Error(response.status === 404 ? "Product not found" : "Unable to load product details");
+        }
+        const data = await response.json();
+        const p = data.product || null;
         setProduct(p);
         setSize(p?.is_bundle ? 0 : (p?.size_ml || 100));
         setActiveImg(0);
-        // related
-        const all = await base44.entities.Product.list("-created_date", 100);
-        setRelated((all || []).filter((x) => x.id !== id && x.category === p?.category).slice(0, 4));
-        // reviews
-        const revs = await base44.entities.Review.filter({ product_id: id, status: "Approved" });
-        setReviews(revs || []);
+        setRelated(Array.isArray(data.related) ? data.related : []);
+        setReviews(Array.isArray(data.reviews) ? data.reviews : []);
       } catch (e) {
         setProduct(null);
       } finally {
