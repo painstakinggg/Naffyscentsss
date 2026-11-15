@@ -2,6 +2,7 @@ import React from "react";
 import Hero from "@/components/home/Hero";
 import SignatureCollection from "@/components/home/SignatureCollection";
 import Categories from "@/components/home/Categories";
+import ShopAllProducts from "@/components/home/ShopAllProducts";
 import BestSellers from "@/components/home/BestSellers";
 import Bundles from "@/components/home/Bundles";
 import BrandStory from "@/components/home/BrandStory";
@@ -18,6 +19,7 @@ export default function Home() {
       <Hero />
       <SignatureCollection />
       <Categories />
+      <ShopAllProducts />
       <BestSellers />
       <Bundles />
       <BrandStory />
