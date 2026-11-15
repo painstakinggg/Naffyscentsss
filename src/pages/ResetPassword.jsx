@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +24,9 @@ export default function ResetPassword() {
     }
     setLoading(true);
     try {
-      await base44.auth.resetPassword({ resetToken, newPassword });
+      const response = await fetch("/api/auth/password-reset/complete", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token: resetToken, new_password: newPassword }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to reset password");
       window.location.href = "/login";
     } catch (err) {
       setError(err.message || "Failed to reset password");
