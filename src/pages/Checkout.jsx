@@ -154,7 +154,7 @@ export default function Checkout() {
               {order.fulfilment_method === "Pickup" ? (
                 <SummaryRow label="Collection" value={`Ilaro Store · ${settings?.pickup_hours || pickupHours}`} />
               ) : (
-                <SummaryRow label="Delivery estimate" value={`${formatNaira(order.delivery_fee_min || ilaroMin)} – ${formatNaira(order.delivery_fee_max || ilaroMax)}`} />
+                <SummaryRow label="Delivery estimate" value={Number(order.delivery_fee_min) === Number(order.delivery_fee_max) ? formatNaira(order.delivery_fee_min) : `${formatNaira(order.delivery_fee_min)} – ${formatNaira(order.delivery_fee_max)}`} />
               )}
             </div>
             {paidStatus === "submitted" ? (
