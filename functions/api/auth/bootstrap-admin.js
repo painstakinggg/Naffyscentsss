@@ -29,9 +29,12 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "Use a password of 12–128 characters containing letters and numbers" }, 400);
   }
 
+  let stage = "prepare-account";
   try {
     const id = crypto.randomUUID();
+    stage = "hash-password";
     const passwordHash = await hashPassword(password);
+    stage = "insert-admin";
     const result = await env.DB.prepare(
       "INSERT INTO users (id, email, password_hash, full_name, role, email_verified) SELECT ?, ?, ?, ?, 'admin', 0 WHERE NOT EXISTS (SELECT 1 FROM users)"
     ).bind(id, email, passwordHash, fullName || "NAFFY SCENTS Administrator").run();
@@ -40,16 +43,23 @@ export async function onRequestPost({ request, env }) {
       return json({ error: "Setup is closed because an account already exists. Please use the normal login or recovery process." }, 409);
     }
 
+    stage = "confirm-admin";
     const user = await env.DB.prepare(
       "SELECT id, email, full_name, role, email_verified FROM users WHERE id = ? LIMIT 1"
     ).bind(id).first();
     if (!user || user.role !== "admin") return json({ error: "Administrator account could not be confirmed" }, 500);
 
+    stage = "create-session";
     const session = await createSession(env.DB, id);
     return json({ user: publicUser(user) }, 201, {
       "set-cookie": cookie("naffy_session", session.token, session.maxAge),
     });
   } catch (error) {
+    console.error("NAFFY admin bootstrap failed", {
+      stage,
+      errorName: error?.name || "Error",
+      errorMessage: String(error?.message || "Unknown error").slice(0, 500),
+    });
     if (String(error?.message || "").toLowerCase().includes("unique")) {
       return json({ error: "An account already exists; setup is closed" }, 409);
     }
