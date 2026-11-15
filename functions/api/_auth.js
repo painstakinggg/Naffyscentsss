@@ -1,6 +1,6 @@
 const encoder = new TextEncoder();
 const SESSION_SECONDS = 60 * 60 * 24 * 14;
-const ITERATIONS = 310000;
+const ITERATIONS = 100000;
 
 export const json = (data, status = 200, headers = {}) => new Response(JSON.stringify(data), {
   status,
