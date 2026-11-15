@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { apiPost } from "@/lib/api";
+import { base44 } from "@/api/base44Client";
 import { Check, Star } from "lucide-react";
 
 export default function ReviewForm({ productId = "", productName = "", orderNumber = "", onSubmitted }) {
@@ -20,7 +20,12 @@ export default function ReviewForm({ productId = "", productName = "", orderNumb
     setError("");
     try {
       const ref = form.order_number.trim();
-      await apiPost("/reviews", {
+      let verified = false;
+      if (ref) {
+        const orders = await base44.entities.Order.filter({});
+        verified = (orders || []).some((o) => o.id.slice(-8).toUpperCase() === ref.toUpperCase());
+      }
+      await base44.entities.Review.create({
         product_id: productId,
         product_name: productName,
         customer_name: form.customer_name.trim(),
@@ -28,6 +33,10 @@ export default function ReviewForm({ productId = "", productName = "", orderNumb
         rating,
         review: form.review.trim(),
         order_number: ref,
+        verified,
+        approved: false,
+        featured: false,
+        status: "Pending",
       });
       setDone(true);
       onSubmitted?.();
