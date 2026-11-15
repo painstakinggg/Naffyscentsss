@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiGet } from "@/lib/api";
 import { formatNaira } from "@/lib/images";
 import { TrendingUp, ShoppingBag, Users, Package } from "lucide-react";
 
@@ -11,12 +11,9 @@ export default function AdminAnalytics() {
   useEffect(() => {
     (async () => {
       try {
-        const [o, p] = await Promise.all([
-          base44.entities.Order.list("-created_date", 200),
-          base44.entities.Product.list("-created_date", 100),
-        ]);
-        setOrders(o || []);
-        setProducts(p || []);
+        const [o, p] = await Promise.all([apiGet("/admin/orders"), apiGet("/admin/products")]);
+        setOrders(o.orders || []);
+        setProducts(p.products || []);
       } catch (e) {}
       setLoading(false);
     })();
