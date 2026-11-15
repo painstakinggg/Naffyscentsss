@@ -58,8 +58,8 @@ export default function AdminSettings() {
   const removePromo = async (p) => {
     if (!confirm("Delete this promotion?")) return;
     await apiDelete(`/admin/promotions/${p.id}`);
-    const list = await base44.entities.Promotion.list("-created_date", 50);
-    setPromotions(list || []);
+    const data = await apiGet("/admin/promotions");
+    setPromotions(data.promotions || []);
   };
 
   if (!form) return <div className="text-cream/50 text-center py-12">Loading settings...</div>;
