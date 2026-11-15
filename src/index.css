@@ -6,24 +6,24 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 39 53% 85%;
-    --card: 0 0% 7%;
-    --card-foreground: 39 53% 85%;
-    --popover: 0 0% 7%;
-    --popover-foreground: 39 53% 85%;
+    --background: 0 0% 100%;
+    --foreground: 20 10% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 14%;
     --primary: 0 39% 47%;
-    --primary-foreground: 39 53% 85%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 39 53% 85%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 30 20% 70%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 15% 96%;
+    --secondary-foreground: 20 10% 14%;
+    --muted: 30 12% 95%;
+    --muted-foreground: 20 6% 43%;
     --accent: 0 39% 47%;
-    --accent-foreground: 39 53% 85%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 50% 40%;
-    --destructive-foreground: 39 53% 85%;
-    --border: 0 30% 28%;
-    --input: 0 0% 14%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 20 10% 88%;
+    --input: 20 10% 88%;
     --ring: 0 39% 47%;
     --radius: 0.25rem;
     --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
@@ -75,8 +75,8 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-color: #0A0A0A;
-    color: #E8D9B8;
+    background-color: #FFFFFF;
+    color: #27211F;
     font-size: 16px;
     line-height: 1.6;
   }
@@ -96,10 +96,10 @@
     width: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #0A0A0A;
+    background: #F4F1ED;
   }
   ::-webkit-scrollbar-thumb {
-    background: #2a2a2a;
+    background: #C8BDB5;
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
@@ -119,13 +119,13 @@
     color: #A84A4A;
   }
   .text-cream {
-    color: #E8D9B8;
+    color: #27211F;
   }
   .bg-obsidian {
-    background-color: #0A0A0A;
+    background-color: #FFFFFF;
   }
   .bg-obsidian-soft {
-    background-color: #121212;
+    background-color: #F8F7F5;
   }
   .border-gold {
     border-color: rgba(168, 74, 74, 0.4);
@@ -145,14 +145,14 @@
   }
 
   .glass {
-    background: rgba(18, 18, 18, 0.6);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(168, 74, 74, 0.15);
   }
 
   .glass-strong {
-    background: rgba(10, 10, 10, 0.85);
+    background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(168, 74, 74, 0.2);
@@ -191,7 +191,7 @@
   .btn-outline-gold:hover {
     background: rgba(168, 74, 74, 0.1);
     border-color: #A84A4A;
-    color: #E8D9B8;
+    color: #27211F;
   }
 
   .tracking-luxe {
@@ -264,3 +264,16 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
+
+/* Naffy Scents light storefront theme */
+body .bg-obsidian { background-color: #FFFFFF !important; }
+body .bg-obsidian-soft { background-color: #F8F7F5 !important; }
+body [class*="bg-obsidian/"] { background-color: rgba(255, 255, 255, 0.94) !important; }
+body [class*="text-cream"] { color: #27211F !important; }
+body .hero-section.bg-obsidian { background-color: #0A0A0A !important; }
+body .hero-section [class*="text-cream"] { color: #F3EDE4 !important; }
+body .site-header:not(.is-scrolled) [class*="text-cream"] { color: #F3EDE4 !important; }
+body .site-header.is-scrolled [class*="text-cream"] { color: #27211F !important; }
+body .site-header.is-scrolled { background: rgba(255, 255, 255, 0.96) !important; }
+body .glass { background: rgba(255, 255, 255, 0.88) !important; }
+body .glass-strong { background: rgba(255, 255, 255, 0.96) !important; }
