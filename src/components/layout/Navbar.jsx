@@ -28,10 +28,19 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const syncScrollState = () => setScrolled(window.scrollY > 30);
+
+    // Read the current position on mount and route changes, not only on
+    // the next user-generated scroll event.
+    syncScrollState();
+    const frame = window.requestAnimationFrame(syncScrollState);
+    window.addEventListener("scroll", syncScrollState, { passive: true });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", syncScrollState);
+    };
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -42,6 +51,10 @@ export default function Navbar() {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
+
+  // Inner pages do not have the dark hero that sits behind the transparent
+  // homepage header, so keep their navigation legible on the burgundy surface.
+  const headerSolid = scrolled || location.pathname !== "/";
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -55,8 +68,8 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`site-header ${scrolled ? "is-scrolled" : ""} fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "glass-strong py-3" : "bg-transparent py-5"
+        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          headerSolid ? "glass-strong py-3" : "bg-transparent py-5"
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8 flex items-center justify-between">
