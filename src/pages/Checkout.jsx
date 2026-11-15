@@ -205,7 +205,7 @@ export default function Checkout() {
         </div>
 
         <form onSubmit={placeOrder} className="mx-auto max-w-xl space-y-5">
-          <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="space-y-4">
             <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
               <button type="button" onClick={() => setSummaryOpen(v => !v)} className="flex w-full items-center justify-between text-left"><span className="font-heading text-xl text-stone-900">Order summary</span><ChevronDown size={18} className={`transition-transform ${summaryOpen ? "rotate-180" : ""}`} /></button>
               <p className="mt-1 text-xs text-stone-500">{items.reduce((n, item) => n + item.quantity, 0)} item(s) in your bag</p>
@@ -230,11 +230,9 @@ export default function Checkout() {
               {!isPickup && <p className="mt-2 text-[11px] leading-5 text-stone-400">Final delivery fee is confirmed with you. It is not included in the order total below.</p>}
               <div className="my-5 border-t border-stone-200" />
               <div className="mb-5 flex items-center justify-between"><span className="text-sm font-semibold text-stone-800">Total</span><span className="text-xl font-semibold text-[#762d38]">{formatNaira(total)}</span></div>
-              <button type="submit" disabled={placing || items.length === 0} className="w-full rounded-md bg-[#762d38] px-5 py-4 text-sm font-semibold tracking-wide text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">{placing ? "Placing your order…" : "Place order"}</button>
-              <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-stone-400"><Lock size={12} /> Secure order submission</p>
             </div>
             <p className="mt-4 text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={`https://wa.me/${settings?.whatsapp_number || "2348103173658"}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
-</section>
+          </div>
 
           <div className="space-y-5">
             <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
@@ -286,6 +284,8 @@ export default function Checkout() {
               </div>
               <p className="mt-3 text-[11px] text-stone-400">Your personal details are used only to process and fulfil your order.</p>
             </section>
+            <button type="submit" disabled={placing || items.length === 0} className="w-full rounded-md bg-[#762d38] px-5 py-4 text-sm font-semibold tracking-wide text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">{placing ? "Placing your order…" : "Place order"}</button>
+            <p className="flex items-center justify-center gap-2 text-[11px] text-stone-400"><Lock size={12} /> Secure order submission</p>
           </div>
 
 
