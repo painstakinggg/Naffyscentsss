@@ -72,6 +72,8 @@ export async function onRequestPost({ request, env }) {
     if (String(error?.message || "").toLowerCase().includes("unique")) {
       return json({ error: "An account already exists; setup is closed" }, 409);
     }
-    return json({ error: "Unable to complete administrator setup", stage, diagnostic: { errorName: error?.name || "Error", detail: String(error?.message || "Unknown error").slice(0, 240) } }, 500);
+    const errorName = error?.name || "Error";
+    const detail = String(error?.message || "Unknown error").slice(0, 240);
+    return json({ error: `Unable to complete administrator setup [${errorName}: ${detail}]`, stage }, 500);
   }
 }
