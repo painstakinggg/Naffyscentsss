@@ -23,7 +23,16 @@ export async function onRequestPost({ request, env }) {
   const password = String(body.password || "");
   const fullName = String(body.full_name || "NAFFY SCENTS Administrator").trim().slice(0, 120);
 
-  if (!safeEqual(token, env.ADMIN_SETUP_TOKEN)) return json({ error: "Invalid setup token" }, 403);
+  if (!safeEqual(token, env.ADMIN_SETUP_TOKEN)) {
+    console.warn("NAFFY admin bootstrap token mismatch", {
+      secretConfigured: typeof env.ADMIN_SETUP_TOKEN === "string" && env.ADMIN_SETUP_TOKEN.length >= 32,
+      secretLength: typeof env.ADMIN_SETUP_TOKEN === "string" ? env.ADMIN_SETUP_TOKEN.length : 0,
+      submittedTokenLength: token.length,
+      lengthsMatch: typeof env.ADMIN_SETUP_TOKEN === "string" && token.length === env.ADMIN_SETUP_TOKEN.length,
+      requestHost: new URL(request.url).host,
+    });
+    return json({ error: "Invalid setup token" }, 403);
+  }
   if (email !== ADMIN_EMAIL || !validEmail(email)) return json({ error: "Administrator email is not permitted" }, 400);
   if (password.length < 12 || password.length > 128 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
     return json({ error: "Use a password of 12–128 characters containing letters and numbers" }, 400);
