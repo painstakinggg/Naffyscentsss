@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
 import { useStore } from "@/lib/store-context";
-import { base44 } from "@/api/base44Client";
+
 import { formatNaira } from "@/lib/images";
 import { Check, Lock, Truck, MessageCircle } from "lucide-react";
 import { Image } from "@/components/ui/image";
@@ -45,16 +45,12 @@ export default function Checkout() {
   const applyCoupon = async () => {
     if (!coupon.trim()) return;
     try {
-      const promos = await base44.entities.Promotion.filter({ code: coupon.trim(), active: true });
-      if (promos && promos.length > 0) {
-        const p = promos[0];
-        const d = p.discount_type === "percentage" ? Math.round((subtotal * p.discount_value) / 100) : p.discount_value;
-        setDiscount(d);
-        setCouponMsg("Coupon applied");
-      } else {
-        setDiscount(0);
-        setCouponMsg("Invalid coupon");
-      }
+      const response = await fetch("/api/promotions/validate", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: coupon.trim(), subtotal }) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Invalid coupon");
+      setDiscount(Number(data.discount) || 0);
+      setCoupon(data.code || coupon.trim());
+      setCouponMsg("Coupon applied");
     } catch (e) {
       setCouponMsg("Could not verify coupon");
     }
@@ -64,7 +60,7 @@ export default function Checkout() {
     e.preventDefault();
     setPlacing(true);
     try {
-      const created = await base44.entities.Order.create({
+      const response = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
         ...form,
         customer_email: isPickup ? "" : form.customer_email,
         address: isPickup ? "" : form.address,
@@ -82,11 +78,14 @@ export default function Checkout() {
         status: "Awaiting Payment Confirmation",
         payment_status: "Unpaid",
         coupon_code: discount > 0 ? coupon : "",
-      });
+      }) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not place order");
+      const created = result.order;
       setOrder(created);
       clearCart();
       window.scrollTo(0, 0);
-      try { await base44.functions.invoke("sendOrderNotification", created); } catch (e) {}
+      
     } catch (err) {
       alert("Could not place order. Please try again.");
     } finally {
@@ -98,7 +97,8 @@ export default function Checkout() {
     if (paidStatus === "submitting" || paidStatus === "submitted") return;
     setPaidStatus("submitting");
     try {
-      const res = await base44.functions.invoke("confirmPayment", { orderId: order.id });
+      const response = await fetch(`/api/orders/${order.id}/payment-confirmation`, { method: "POST" });
+      if (!response.ok) throw new Error("Could not submit payment confirmation");
       setPaidStatus("submitted");
     } catch (e) {
       setPaidStatus("error");
