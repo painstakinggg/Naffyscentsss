@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminOrders from "@/components/admin/AdminOrders";
 import AdminReviews from "@/components/admin/AdminReviews";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminAnalytics from "@/components/admin/AdminAnalytics";
 import { Package, ShoppingBag, Star, Settings, BarChart3, LayoutDashboard, ArrowLeft, Menu, X } from "lucide-react";
-import { isAppAdmin } from "@/lib/admin-access";
+
 
 const TABS = [
   { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, component: AdminAnalytics },
@@ -19,7 +19,8 @@ const TABS = [
 
 export default function Admin() {
   const [tab, setTab] = useState("dashboard");
-  const [authed, setAuthed] = useState(null);
+  const { user, isLoadingAuth } = useAuth();
+  const authed = !isLoadingAuth && user?.role === "admin";
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
