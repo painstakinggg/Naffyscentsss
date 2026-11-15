@@ -51,8 +51,8 @@ export default function AdminSettings() {
 
   const togglePromo = async (p) => {
     await apiPatch(`/admin/promotions/${p.id}`, { active: !p.active });
-    const list = await base44.entities.Promotion.list("-created_date", 50);
-    setPromotions(list || []);
+    const data = await apiGet("/admin/promotions");
+    setPromotions(data.promotions || []);
   };
 
   const removePromo = async (p) => {
