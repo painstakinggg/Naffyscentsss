@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function Bundles() {
   const { products, loading } = useProducts({ is_bundle: true });
-  const display = products.length > 0 ? products.slice(0, 4) : [];
+  const display = products.slice(0, 4);
 
   if (!loading && display.length === 0) return null;
 
@@ -23,23 +23,23 @@ export default function Bundles() {
       </Reveal>
 
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="aspect-[3/4] bg-obsidian-soft animate-pulse" />
           ))}
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {display.map((p, i) => (
-              <Reveal key={p.id} delay={i * 0.1}>
-                <ProductCard product={p} badge="Bundle" />
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-6">
+            {display.map((product, index) => (
+              <Reveal key={product.id} delay={index * 0.08}>
+                <ProductCard product={product} badge="Bundle" />
               </Reveal>
             ))}
           </div>
           <div className="text-center mt-12">
-            <Link to="/shop?type=bundle" className="btn-outline-gold inline-flex items-center gap-2 px-10 py-4">
-              View All Bundles <ArrowRight size={15} />
+            <Link to="/shop?type=bundle" className="btn-outline-gold inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] tracking-luxe-sm uppercase">
+              View All Bundles <ArrowRight size={14} />
             </Link>
           </div>
         </>
