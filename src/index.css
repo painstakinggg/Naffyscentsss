@@ -277,3 +277,70 @@ body .site-header.is-scrolled [class*="text-cream"] { color: #27211F !important;
 body .site-header.is-scrolled { background: rgba(255, 255, 255, 0.96) !important; }
 body .glass { background: rgba(255, 255, 255, 0.88) !important; }
 body .glass-strong { background: rgba(255, 255, 255, 0.96) !important; }
+
+
+/* Focused newsletter and promo banner treatments */
+.newsletter-panel {
+  background: linear-gradient(125deg, #571D2B 0%, #742B3B 52%, #4B1725 100%);
+  box-shadow: 0 22px 65px rgba(65, 20, 32, 0.16);
+}
+.newsletter-panel::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(244, 224, 205, 0.2);
+  border-radius: 12px;
+  pointer-events: none;
+}
+.newsletter-glow {
+  position: absolute;
+  width: 19rem;
+  height: 19rem;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  opacity: 0.2;
+}
+.newsletter-glow-one { background: #D39A83; top: -12rem; left: -7rem; }
+.newsletter-glow-two { background: #C77A69; right: -8rem; bottom: -14rem; }
+.newsletter-kicker { color: #E8C6B6; }
+.newsletter-panel h2 { color: #FFF9F4 !important; }
+.newsletter-panel p { color: rgba(255, 249, 244, 0.78); }
+.newsletter-form input {
+  color: #27211F;
+  background: #FFFDFC;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.newsletter-form input::placeholder { color: #82746F; opacity: 1; }
+.newsletter-form input:focus {
+  border-color: #E8C6B6;
+  box-shadow: 0 0 0 3px rgba(232, 198, 182, 0.2);
+}
+.newsletter-submit {
+  color: #54202C;
+  background: #F0D8C9;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.newsletter-submit:hover { background: #FFF3E9; transform: translateY(-1px); }
+.newsletter-success {
+  color: #FFF9F4;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+.newsletter-panel .newsletter-note { color: rgba(255, 249, 244, 0.62) !important; }
+.promo-banner { isolation: isolate; }
+.promo-overlay {
+  background: linear-gradient(90deg, rgba(12, 9, 10, 0.72), rgba(12, 9, 10, 0.42) 55%, rgba(12, 9, 10, 0.68)) !important;
+}
+.promo-banner h2 { color: #FFF9F4 !important; text-shadow: 0 3px 24px rgba(0, 0, 0, 0.35); }
+.promo-eyebrow { color: #F0D8C9; }
+.promo-cta { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22); }
+@media (max-width: 640px) {
+  .newsletter-section { padding-left: 1rem; padding-right: 1rem; }
+  .newsletter-panel { border-radius: 14px; padding-left: 1.25rem; padding-right: 1.25rem; }
+  .newsletter-panel::before { inset: 9px; }
+}
