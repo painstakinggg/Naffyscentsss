@@ -6,6 +6,8 @@ import WhatsAppButton from "./WhatsAppButton";
 
 export default function Layout() {
   const { pathname } = useLocation();
+  const isCheckout = pathname === "/checkout";
+
   return (
     <div className="min-h-screen bg-obsidian flex flex-col">
       <Navbar />
