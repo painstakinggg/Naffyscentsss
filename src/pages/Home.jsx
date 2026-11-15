@@ -1,33 +1,27 @@
 import React from "react";
 import Hero from "@/components/home/Hero";
+import NewArrivals from "@/components/home/NewArrivals";
+import BestSellers from "@/components/home/BestSellers";
 import SignatureCollection from "@/components/home/SignatureCollection";
 import Categories from "@/components/home/Categories";
-import ShopAllProducts from "@/components/home/ShopAllProducts";
-import BestSellers from "@/components/home/BestSellers";
 import Bundles from "@/components/home/Bundles";
-import BrandStory from "@/components/home/BrandStory";
-import WhyNaffy from "@/components/home/WhyNaffy";
 import FragranceFinder from "@/components/home/FragranceFinder";
 import PromoBanner from "@/components/home/PromoBanner";
-import Testimonials from "@/components/home/Testimonials";
-import SocialGrid from "@/components/home/SocialGrid";
+import WhyNaffy from "@/components/home/WhyNaffy";
 import Newsletter from "@/components/home/Newsletter";
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <NewArrivals />
+      <BestSellers />
       <SignatureCollection />
       <Categories />
-      <ShopAllProducts />
-      <BestSellers />
       <Bundles />
-      <BrandStory />
-      <WhyNaffy />
       <FragranceFinder />
       <PromoBanner />
-      <Testimonials />
-      <SocialGrid />
+      <WhyNaffy />
       <Newsletter />
     </>
   );
