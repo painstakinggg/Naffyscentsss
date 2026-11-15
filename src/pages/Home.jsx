@@ -6,7 +6,6 @@ import SignatureCollection from "@/components/home/SignatureCollection";
 import Categories from "@/components/home/Categories";
 import Bundles from "@/components/home/Bundles";
 import FragranceFinder from "@/components/home/FragranceFinder";
-import PromoBanner from "@/components/home/PromoBanner";
 import WhyNaffy from "@/components/home/WhyNaffy";
 import Newsletter from "@/components/home/Newsletter";
 
@@ -20,7 +19,6 @@ export default function Home() {
       <Categories />
       <Bundles />
       <FragranceFinder />
-      <PromoBanner />
       <WhyNaffy />
       <Newsletter />
     </>
