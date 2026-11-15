@@ -41,6 +41,12 @@ export default function AdminOrders() {
     load();
   };
 
+  const updatePaymentStatus = async (id, payment_status) => {
+    await apiPatch(`/admin/orders/${id}`, { payment_status });
+    setView((v) => (v && v.id === id ? { ...v, payment_status } : v));
+    load();
+  };
+
   return (
     <div>
       <h2 className="font-heading text-3xl text-cream mb-6">Orders ({orders.length})</h2>
@@ -128,6 +134,13 @@ export default function AdminOrders() {
               <div className="luxury-line my-3" />
               <Row label="Payment Status" value={view.payment_status} />
               <Row label="Payment Confirmation" value={view.payment_confirmation_submitted ? `Submitted — ${view.payment_confirmation_date || ""}` : "Not submitted"} />
+              <div className="space-y-2">
+                <label className="text-[10px] tracking-luxe-sm text-gold uppercase">Record Payment Verification</label>
+                <select value={view.payment_status} onChange={(e) => updatePaymentStatus(view.id, e.target.value)}
+                  className="w-full bg-obsidian border border-gold/25 text-cream text-sm px-3 py-2.5 outline-none cursor-pointer">
+                  {["Unpaid", "Pending", "Paid"].map((s) => <option key={s} value={s} className="bg-obsidian">{s}</option>)}
+                </select>
+              </div>
               {view.coupon_code && <Row label="Coupon" value={view.coupon_code} />}
               <div className="luxury-line my-3" />
               <div className="space-y-2">
