@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
 import { useStore } from "@/lib/store-context";
-
 import { formatNaira } from "@/lib/images";
-import { Check, Lock, Truck, MessageCircle } from "lucide-react";
+import { Check, Lock, Truck, MessageCircle, ArrowLeft, ShoppingBag, MapPin, CreditCard } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
 const LOGO_URL = "/favicon.svg";
-
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
   "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT - Abuja", "Gombe",
@@ -16,6 +14,9 @@ const NIGERIAN_STATES = [
   "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto",
   "Taraba", "Yobe", "Zamfara",
 ];
+
+const inputClass = "w-full rounded-md border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 outline-none transition focus:border-[#762d38] focus:ring-2 focus:ring-[#762d38]/10 placeholder:text-stone-400";
+const labelClass = "mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-600";
 
 export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
@@ -35,8 +36,8 @@ export default function Checkout() {
   const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
   const logisticsProvider = settings?.logistics_provider || "Josh Logistics";
   const pickupHours = settings?.pickup_hours || "12:00 PM – 5:00 PM";
-  const deliveryFee = 0; // pickup: free; logistics: final charge confirmed after order
-  const total = subtotal - discount + (items.length > 0 ? deliveryFee : 0);
+  const deliveryFee = 0;
+  const total = Math.max(0, subtotal - discount + (items.length > 0 ? deliveryFee : 0));
 
   useEffect(() => {
     if (items.length === 0 && !order) navigate("/cart");
@@ -45,14 +46,18 @@ export default function Checkout() {
   const applyCoupon = async () => {
     if (!coupon.trim()) return;
     try {
-      const response = await fetch("/api/promotions/validate", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ code: coupon.trim(), subtotal }) });
+      const response = await fetch("/api/promotions/validate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code: coupon.trim(), subtotal }),
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Invalid coupon");
       setDiscount(Number(data.discount) || 0);
       setCoupon(data.code || coupon.trim());
-      setCouponMsg("Coupon applied");
-    } catch (e) {
-      setCouponMsg("Could not verify coupon");
+      setCouponMsg("Coupon applied successfully");
+    } catch {
+      setCouponMsg("We could not verify that coupon");
     }
   };
 
@@ -60,34 +65,36 @@ export default function Checkout() {
     e.preventDefault();
     setPlacing(true);
     try {
-      const response = await fetch("/api/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
-        ...form,
-        customer_email: isPickup ? "" : form.customer_email,
-        address: isPickup ? "" : form.address,
-        city: isPickup ? "" : form.city,
-        state: isPickup ? "" : form.state,
-        items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, size_ml: i.size_ml, quantity: i.quantity, image: i.image })),
-        fulfilment_method: isPickup ? "Pickup" : "Logistics Delivery",
-        subtotal,
-        delivery_fee: deliveryFee,
-        delivery_fee_min: isPickup ? 0 : ilaroMin,
-        delivery_fee_max: isPickup ? 0 : ilaroMax,
-        delivery_info_note: isPickup ? "" : `Delivery within Ilaro: ${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)} via ${logisticsProvider}`,
-        discount,
-        total,
-        status: "Awaiting Payment Confirmation",
-        payment_status: "Unpaid",
-        coupon_code: discount > 0 ? coupon : "",
-      }) });
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          customer_email: isPickup ? "" : form.customer_email,
+          address: isPickup ? "" : form.address,
+          city: isPickup ? "" : form.city,
+          state: isPickup ? "" : form.state,
+          items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, size_ml: i.size_ml, quantity: i.quantity, image: i.image })),
+          fulfilment_method: isPickup ? "Pickup" : "Logistics Delivery",
+          subtotal,
+          delivery_fee: deliveryFee,
+          delivery_fee_min: isPickup ? 0 : ilaroMin,
+          delivery_fee_max: isPickup ? 0 : ilaroMax,
+          delivery_info_note: isPickup ? "" : `Delivery within Ilaro: ${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)} via ${logisticsProvider}`,
+          discount,
+          total,
+          status: "Awaiting Payment Confirmation",
+          payment_status: "Unpaid",
+          coupon_code: discount > 0 ? coupon : "",
+        }),
+      });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not place order");
-      const created = result.order;
-      setOrder(created);
+      setOrder(result.order);
       clearCart();
       window.scrollTo(0, 0);
-      
-    } catch (err) {
-      alert("Could not place order. Please try again.");
+    } catch {
+      alert("Could not place your order. Please check your details and try again.");
     } finally {
       setPlacing(false);
     }
@@ -100,206 +107,192 @@ export default function Checkout() {
       const response = await fetch(`/api/orders/${order.id}/payment-confirmation`, { method: "POST" });
       if (!response.ok) throw new Error("Could not submit payment confirmation");
       setPaidStatus("submitted");
-    } catch (e) {
+    } catch {
       setPaidStatus("error");
     }
   };
 
   if (order) {
     const orderRef = order.id.slice(-8).toUpperCase();
-    const waNumber = settings?.whatsapp_number || "2348012345678";
+    const waNumber = settings?.whatsapp_number || "2348103173658";
     const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(`Hello Naffy Scents, here is my payment proof for order #${orderRef} (amount: ${formatNaira(order.total)}).`)}`;
     return (
-      <div className="pt-32 pb-20 min-h-screen flex items-center justify-center px-5">
-        <div className="text-center max-w-md">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <Image src={LOGO_URL} alt="Naffy Scents" fittingType="fit" className="h-14 w-auto object-contain" />
-            <span className="font-heading font-semibold tracking-luxe-sm text-cream text-2xl leading-none whitespace-nowrap">NAFFY SCENTS</span>
+      <main className="min-h-screen bg-[#faf9f6] px-5 pb-20 pt-12 text-stone-800 sm:pt-16">
+        <div className="mx-auto max-w-xl">
+          <div className="mb-10 flex items-center justify-center gap-3">
+            <Image src={LOGO_URL} alt="Naffy Scents" fittingType="fit" className="h-12 w-auto object-contain" />
+            <span className="font-heading text-xl font-semibold tracking-[0.12em] text-[#762d38]">NAFFY SCENTS</span>
           </div>
-          <div className="w-20 h-20 rounded-full border border-gold flex items-center justify-center mx-auto mb-8 animate-scale-in">
-            <Check size={32} className="text-gold" strokeWidth={1.5} />
-          </div>
-          <p className="text-[11px] tracking-luxe text-gold uppercase mb-3">Order Confirmed</p>
-          <h1 className="font-heading text-4xl text-cream mb-4">Thank you, {order.customer_name.split(" ")[0]}.</h1>
-          <p className="text-sm text-cream/55 mb-2">Your order has been received.</p>
-          <p className="text-sm text-cream/40 mb-8">Order reference: <span className="text-gold">{orderRef}</span></p>
-          <div className="glass rounded-xl p-6 text-left mb-8">
-            <div className="flex justify-between mb-2"><span className="text-cream/60 text-sm">Fulfilment</span><span className="text-cream/70 text-sm">{order.fulfilment_method === "Pickup" ? "Store Pickup" : "Logistics Delivery"}</span></div>
-            <div className="flex justify-between mb-2"><span className="text-cream/60 text-sm">Total</span><span className="text-gold">{formatNaira(order.total)}</span></div>
-            {order.fulfilment_method === "Pickup" ? (
-              <div className="flex justify-between"><span className="text-cream/60 text-sm">Collection</span><span className="text-cream/70 text-sm">Ilaro Store · {settings?.pickup_hours || pickupHours}</span></div>
-            ) : (
-              <div className="flex justify-between"><span className="text-cream/60 text-sm">Delivery (Ilaro)</span><span className="text-cream/70 text-sm">{formatNaira(order.delivery_fee_min || ilaroMin)} – {formatNaira(order.delivery_fee_max || ilaroMax)} — final charge confirmed</span></div>
-            )}
-          </div>
-          {paidStatus === "submitted" ? (
-            <div className="glass rounded-xl p-6 text-left mb-6 border border-sage/30">
-              <p className="text-sage text-sm font-medium mb-1">Payment confirmation received</p>
-              <p className="text-xs text-cream/60">Thank you. We've received your payment confirmation. Your order will be processed after payment is verified.</p>
+          <div className="rounded-2xl border border-stone-200 bg-white p-7 text-center shadow-sm sm:p-10">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#762d38]/10 text-[#762d38]">
+              <Check size={30} strokeWidth={1.7} />
             </div>
-          ) : (
-            <div className="glass rounded-xl p-6 text-left mb-6">
-              <p className="text-[10px] tracking-luxe-sm text-gold uppercase mb-2">Payment</p>
-              <p className="text-sm text-cream/80 mb-1">Order #: <span className="text-gold">{orderRef}</span></p>
-              <p className="text-sm text-cream/80 mb-3">Amount to pay: <span className="text-gold">{formatNaira(order.total)}</span></p>
-              <p className="text-sm text-cream/70 mb-3">Please transfer the exact amount to the Naffy Scents account below:</p>
-              {settings?.bank_name ? (
-                <div className="p-3 border border-gold/20 rounded-lg space-y-1.5 mb-3 text-sm">
-                  <div className="flex justify-between"><span className="text-cream/60">Bank</span><span className="text-cream">{settings.bank_name}</span></div>
-                  {settings?.account_name && <div className="flex justify-between"><span className="text-cream/60">Account Name</span><span className="text-cream">{settings.account_name}</span></div>}
-                  {settings?.account_number && <div className="flex justify-between"><span className="text-cream/60">Account Number</span><span className="text-cream tracking-wide">{settings.account_number}</span></div>}
-                </div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#762d38]">Order received</p>
+            <h1 className="mb-3 font-heading text-3xl text-stone-900">Thank you, {order.customer_name.split(" ")[0]}.</h1>
+            <p className="text-sm text-stone-600">Your order has been created successfully.</p>
+            <p className="mt-2 text-sm text-stone-500">Order reference: <strong className="text-[#762d38]">#{orderRef}</strong></p>
+            <div className="my-7 rounded-xl bg-[#faf9f6] p-5 text-left">
+              <SummaryRow label="Fulfilment" value={order.fulfilment_method === "Pickup" ? "Store pickup" : "Logistics delivery"} />
+              <SummaryRow label="Order total" value={formatNaira(order.total)} strong />
+              {order.fulfilment_method === "Pickup" ? (
+                <SummaryRow label="Collection" value={`Ilaro Store · ${settings?.pickup_hours || pickupHours}`} />
               ) : (
-                <p className="text-xs text-cream/50 mb-3">Account details will be shared with you shortly. Use the details provided by our team to complete the transfer.</p>
+                <SummaryRow label="Delivery estimate" value={`${formatNaira(order.delivery_fee_min || ilaroMin)} – ${formatNaira(order.delivery_fee_max || ilaroMax)}`} />
               )}
-              {settings?.payment_instructions && <p className="text-xs text-cream/50 mb-3">{settings.payment_instructions}</p>}
-              <a href={waUrl} target="_blank" rel="noopener noreferrer" className="btn-outline-gold w-full py-3 flex items-center justify-center gap-2 mb-3">
-                <MessageCircle size={15} /> Send Payment Proof on WhatsApp
-              </a>
-              <button onClick={handleConfirmPayment} disabled={paidStatus === "submitting"} className="btn-gold w-full py-3 disabled:opacity-50">
-                {paidStatus === "submitting" ? "Submitting..." : "I've Paid"}
-              </button>
-              {paidStatus === "error" && <p className="text-xs text-garnet mt-2">Could not submit confirmation. Please try again or contact us.</p>}
-              <p className="text-xs text-cream/50 mt-3">After making the transfer, please send your payment receipt to Naffy Scents through WhatsApp so your payment can be confirmed.</p>
             </div>
-          )}
-
-          <p className="text-xs text-cream/40 mb-6">We'll contact you on <span className="text-cream/60">{order.phone}</span>{order.fulfilment_method === "Pickup" ? " when your order is ready for pickup." : " to confirm delivery and payment."}</p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link to={`/leave-review?order=${order.id.slice(-8).toUpperCase()}`} className="btn-outline-gold inline-block px-10 py-4">Leave a Review</Link>
-            <Link to="/shop" className="btn-gold inline-block px-10 py-4">Continue Shopping</Link>
+            {paidStatus === "submitted" ? (
+              <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-left">
+                <p className="mb-1 text-sm font-semibold text-emerald-800">Payment confirmation received</p>
+                <p className="text-xs leading-5 text-emerald-700">Your order will be processed after our team verifies the payment.</p>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-stone-200 p-5 text-left">
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#762d38]">Bank transfer payment</p>
+                <p className="mb-1 text-sm text-stone-600">Transfer the exact order amount:</p>
+                <p className="mb-4 text-2xl font-semibold text-stone-900">{formatNaira(order.total)}</p>
+                {settings?.bank_name ? (
+                  <div className="mb-4 space-y-2 rounded-lg bg-[#faf9f6] p-4 text-sm">
+                    <SummaryRow label="Bank" value={settings.bank_name} />
+                    {settings?.account_name && <SummaryRow label="Account name" value={settings.account_name} />}
+                    {settings?.account_number && <SummaryRow label="Account number" value={settings.account_number} />}
+                  </div>
+                ) : (
+                  <p className="mb-4 text-sm text-stone-500">Our team will share the bank details with you shortly.</p>
+                )}
+                {settings?.payment_instructions && <p className="mb-4 text-xs leading-5 text-stone-500">{settings.payment_instructions}</p>}
+                <a href={waUrl} target="_blank" rel="noopener noreferrer" className="mb-3 flex w-full items-center justify-center gap-2 rounded-md border border-[#762d38] px-4 py-3 text-sm font-semibold text-[#762d38] transition hover:bg-[#762d38]/5">
+                  <MessageCircle size={16} /> Send payment proof on WhatsApp
+                </a>
+                <button onClick={handleConfirmPayment} disabled={paidStatus === "submitting"} className="w-full rounded-md bg-[#762d38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#60232d] disabled:opacity-50">
+                  {paidStatus === "submitting" ? "Submitting…" : "I've made the transfer"}
+                </button>
+                {paidStatus === "error" && <p className="mt-2 text-xs text-red-600">Could not submit confirmation. Please try again.</p>}
+                <p className="mt-3 text-xs leading-5 text-stone-500">Your payment is not marked as complete until our team verifies it.</p>
+              </div>
+            )}
+            <p className="mt-6 text-xs text-stone-500">We’ll contact you on {order.phone} {order.fulfilment_method === "Pickup" ? "when your order is ready for collection." : "to confirm delivery and payment."}</p>
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link to="/shop" className="rounded-md bg-[#762d38] px-7 py-3 text-sm font-semibold text-white">Continue shopping</Link>
+              <Link to={`/leave-review?order=${orderRef}`} className="rounded-md border border-stone-300 px-7 py-3 text-sm font-semibold text-stone-700">Leave a review</Link>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="pt-28 pb-20 min-h-screen">
-      <div className="max-w-[1200px] mx-auto px-5 sm:px-8">
-        <div className="text-center mb-10">
-          <p className="text-[11px] tracking-luxe text-gold uppercase mb-3">Checkout</p>
-          <h1 className="font-heading text-4xl text-cream">Complete Your Order</h1>
+    <main className="min-h-screen bg-[#faf9f6] pb-20 pt-8 text-stone-800 sm:pt-12">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="mb-8 flex items-center justify-between">
+          <Link to="/cart" className="inline-flex items-center gap-2 text-sm text-stone-600 transition hover:text-[#762d38]"><ArrowLeft size={16} /> Back to bag</Link>
+          <Link to="/" className="flex items-center gap-2">
+            <Image src={LOGO_URL} alt="Naffy Scents" fittingType="fit" className="h-9 w-auto object-contain" />
+            <span className="font-heading text-sm font-semibold tracking-[0.13em] text-[#762d38] sm:text-base">NAFFY SCENTS</span>
+          </Link>
+          <span className="hidden items-center gap-1.5 text-xs text-stone-500 sm:flex"><Lock size={13} /> Secure checkout</span>
         </div>
 
-        <form onSubmit={placeOrder} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="glass rounded-xl p-6">
-              <h2 className="font-heading text-2xl text-cream mb-5">Fulfilment Method</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button type="button" onClick={() => setFulfilment("delivery")} className={`text-left p-4 border rounded-lg transition-all ${fulfilment === "delivery" ? "border-gold bg-gold/10" : "border-gold/20 hover:border-gold/40"}`}>
-                  <p className="text-cream text-sm font-medium mb-1">Logistics Delivery</p>
-                  <p className="text-cream/50 text-xs">Delivery within Ilaro via {logisticsProvider} · {formatNaira(ilaroMin)}–{formatNaira(ilaroMax)}</p>
+        <div className="mb-9 text-center">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#762d38]">The art of fragrance</p>
+          <h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Checkout</h1>
+          <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-[0.12em] sm:gap-6">
+            <Step number="01" label="Bag" active />
+            <div className="h-px w-8 bg-stone-300 sm:w-16" />
+            <Step number="02" label="Details" active />
+            <div className="h-px w-8 bg-stone-300 sm:w-16" />
+            <Step number="03" label="Payment" />
+          </div>
+        </div>
+
+        <form onSubmit={placeOrder} className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_370px] lg:gap-8">
+          <div className="space-y-5">
+            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+              <SectionHeading icon={<ShoppingBag size={17} />} title="Your details" subtitle="Tell us who we’re preparing this order for." />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div><label className={labelClass}>Full name *</label><input className={inputClass} autoComplete="name" value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} placeholder="Your full name" required /></div>
+                <div><label className={labelClass}>Phone number *</label><input className={inputClass} type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g. 080…" required /></div>
+                {!isPickup && <div className="sm:col-span-2"><label className={labelClass}>Email address <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" /></div>}
+              </div>
+            </section>
+
+            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+              <SectionHeading icon={<MapPin size={17} />} title="Delivery or pickup" subtitle="Choose how you’d like to receive your fragrance." />
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button type="button" onClick={() => setFulfilment("delivery")} className={`rounded-lg border p-4 text-left transition ${!isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]/10" : "border-stone-200 hover:border-stone-400"}`}>
+                  <span className="mb-2 flex items-center justify-between text-sm font-semibold text-stone-800">Home delivery <Truck size={17} className="text-[#762d38]" /></span>
+                  <span className="block text-xs leading-5 text-stone-500">Via {logisticsProvider}. Ilaro estimate: {formatNaira(ilaroMin)} – {formatNaira(ilaroMax)}.</span>
                 </button>
-                <button type="button" onClick={() => setFulfilment("pickup")} className={`text-left p-4 border rounded-lg transition-all ${fulfilment === "pickup" ? "border-gold bg-gold/10" : "border-gold/20 hover:border-gold/40"}`}>
-                  <p className="text-cream text-sm font-medium mb-1">Pickup</p>
-                  <p className="text-cream/50 text-xs">Collect in person from our Ilaro store · {pickupHours}</p>
+                <button type="button" onClick={() => setFulfilment("pickup")} className={`rounded-lg border p-4 text-left transition ${isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]/10" : "border-stone-200 hover:border-stone-400"}`}>
+                  <span className="mb-2 flex items-center justify-between text-sm font-semibold text-stone-800">Store pickup <ShoppingBag size={17} className="text-[#762d38]" /></span>
+                  <span className="block text-xs leading-5 text-stone-500">Collect in Ilaro. Pickup hours: {pickupHours}.</span>
                 </button>
               </div>
               {isPickup ? (
-                <p className="text-xs text-cream/50 mt-4">Order online and collect from: <span className="text-cream/70">{settings?.store_address || "Ilaro, Ogun State"}</span> · Pickup hours: <span className="text-cream/70">{pickupHours}</span></p>
+                <div className="mt-4 rounded-lg bg-[#faf9f6] p-4 text-xs leading-5 text-stone-600">Collection address: <strong className="font-semibold text-stone-800">{settings?.store_address || "Ilaro, Ogun State"}</strong><br />Pickup hours: {pickupHours}</div>
               ) : (
-                <p className="text-xs text-cream/50 mt-4">Delivery within Ilaro: <span className="text-cream/70">{formatNaira(ilaroMin)} – {formatNaira(ilaroMax)}</span> via {logisticsProvider}. The final delivery charge is confirmed with you after your order is placed.</p>
+                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2"><label className={labelClass}>Street address *</label><input className={inputClass} autoComplete="street-address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="House number, street and area" required /></div>
+                  <div><label className={labelClass}>City *</label><input className={inputClass} autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Your city" required /></div>
+                  <div><label className={labelClass}>State *</label><select className={inputClass} autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })}>{NIGERIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}</select></div>
+                </div>
               )}
-            </div>
+            </section>
 
-            <div className="glass rounded-xl p-6">
-              <h2 className="font-heading text-2xl text-cream mb-5">{isPickup ? "Contact Information" : "Delivery Information"}</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Field label="Full Name" value={form.customer_name} onChange={(v) => setForm({ ...form, customer_name: v })} required />
-                <Field label="Phone Number" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-                {isPickup ? null : (
-                  <>
-                    <Field label="Email (optional)" type="email" value={form.customer_email} onChange={(v) => setForm({ ...form, customer_email: v })} className="sm:col-span-2" />
-                    <Field label="Delivery Address" value={form.address} onChange={(v) => setForm({ ...form, address: v })} required className="sm:col-span-2" />
-                    <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} required />
-                    <div className="space-y-2">
-                      <label className="text-[10px] tracking-luxe-sm text-gold uppercase">State</label>
-                      <select value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })}
-                        className="w-full bg-transparent border border-gold/25 px-4 py-3 text-cream text-sm outline-none focus:border-gold cursor-pointer">
-                        {NIGERIAN_STATES.map((s) => <option key={s} value={s} className="bg-obsidian">{s}</option>)}
-                      </select>
-                    </div>
-                  </>
-                )}
+            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+              <SectionHeading icon={<CreditCard size={17} />} title="Payment method" subtitle="Your payment instructions will be shown after your order is placed." />
+              <div className="flex items-start gap-3 rounded-lg border border-stone-200 bg-[#faf9f6] p-4">
+                <div className="mt-0.5 rounded-md bg-white p-2 text-[#762d38]"><Lock size={17} /></div>
+                <div><p className="text-sm font-semibold text-stone-800">Bank transfer</p><p className="mt-1 text-xs leading-5 text-stone-500">We’ll display the store’s bank details and your exact order amount on the confirmation screen. Payment is verified by our team before processing.</p></div>
               </div>
-            </div>
-
-            <div className="glass rounded-xl p-6">
-              <h2 className="font-heading text-2xl text-cream mb-2">Payment</h2>
-              <p className="text-sm text-cream/50 mb-5">Payment is via bank transfer. The Naffy Scents account details and the exact amount to pay will be shown on the order confirmation screen once your order has been placed.</p>
-              <div className="flex items-center gap-3 p-4 border border-gold/20 rounded-lg">
-                <Lock size={18} className="text-gold" />
-                <span className="text-sm text-cream/60">Your information is secure and encrypted</span>
-              </div>
-            </div>
+              <p className="mt-3 text-[11px] text-stone-400">Your personal details are used only to process and fulfil your order.</p>
+            </section>
           </div>
 
-          {/* Summary */}
-          <div className="lg:col-span-1">
-            <div className="glass rounded-xl p-6 sticky top-28">
-              <h2 className="font-heading text-2xl text-cream mb-5">Order Summary</h2>
-              <div className="space-y-3 max-h-48 overflow-y-auto mb-4">
+          <aside className="lg:sticky lg:top-24">
+            <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 className="font-heading text-xl text-stone-900">Order summary</h2>
+              <p className="mt-1 text-xs text-stone-500">{items.reduce((n, item) => n + item.quantity, 0)} item(s) in your bag</p>
+              <div className="my-5 space-y-4">
                 {items.map((item) => (
                   <div key={`${item.id}-${item.size_ml}`} className="flex gap-3">
-                    <div className="w-12 h-16 shrink-0 overflow-hidden bg-obsidian-soft">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex-1 text-sm">
-                      <p className="text-cream/80 text-xs">{item.name}</p>
-                      <p className="text-cream/40 text-xs">{item.is_bundle ? "Bundle" : `${item.size_ml}ml`} × {item.quantity}</p>
-                    </div>
-                    <span className="text-cream/70 text-sm">{formatNaira(item.price * item.quantity)}</span>
+                    <div className="h-16 w-14 shrink-0 overflow-hidden rounded-md bg-[#f3f0ec]"><img src={item.image} alt={item.name} className="h-full w-full object-cover" /></div>
+                    <div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-medium text-stone-800">{item.name}</p><p className="mt-1 text-[11px] text-stone-500">{item.is_bundle ? "Bundle" : `${item.size_ml}ml`} · Qty {item.quantity}</p></div>
+                    <span className="whitespace-nowrap text-xs font-medium text-stone-700">{formatNaira(item.price * item.quantity)}</span>
                   </div>
                 ))}
               </div>
-
-              {/* Coupon */}
-              <div className="flex gap-2 mb-4">
-                <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Coupon code"
-                  className="flex-1 bg-transparent border border-gold/25 px-3 py-2.5 text-cream placeholder:text-cream/40 text-sm outline-none focus:border-gold" />
-                <button type="button" onClick={applyCoupon} className="btn-outline-gold px-4 py-2.5 text-xs">Apply</button>
+              <div className="flex gap-2">
+                <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-200 px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
+                <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] hover:bg-[#762d38]/5">Apply</button>
               </div>
-              {couponMsg && <p className={`text-xs mb-3 ${discount > 0 ? "text-sage" : "text-garnet"}`}>{couponMsg}</p>}
-
-              <div className="luxury-line my-4" />
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-cream/60"><span>Fulfilment</span><span>{isPickup ? "Store Pickup" : `Logistics Delivery (${logisticsProvider})`}</span></div>
-                <div className="flex justify-between text-cream/60"><span>Subtotal</span><span>{formatNaira(subtotal)}</span></div>
-                {discount > 0 && <div className="flex justify-between text-sage"><span>Discount</span><span>-{formatNaira(discount)}</span></div>}
-                <div className="flex justify-between text-cream/60"><span>{isPickup ? "Collection" : "Delivery (Ilaro)"}</span><span>{isPickup ? formatNaira(0) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`}</span></div>
-              </div>
-              {isPickup ? (
-                <p className="text-xs text-cream/50 mt-3">You will collect your order from: <span className="text-cream/70">{settings?.store_address || "Ilaro, Ogun State"}</span> · Pickup hours: <span className="text-cream/70">{pickupHours}</span></p>
-              ) : (
-                <p className="text-xs text-cream/50 mt-3">Final delivery charge confirmed on confirmation. Total shown excludes delivery.</p>
-              )}
-              <div className="luxury-line my-4" />
-              <div className="flex justify-between mb-6">
-                <span className="text-cream">Total</span>
-                <span className="text-gold text-xl font-medium">{formatNaira(total)}</span>
-              </div>
-              <button type="submit" disabled={placing} className="btn-gold w-full py-4 flex items-center justify-center gap-2 disabled:opacity-50">
-                {placing ? "Placing Order..." : <>Place Order</>}
-              </button>
-              <p className="flex items-center justify-center gap-1.5 text-xs text-cream/40 mt-4">
-                <Truck size={13} /> {isPickup ? `Pickup from Ilaro store · ${pickupHours}` : `Delivery via ${logisticsProvider} · Ilaro ${formatNaira(ilaroMin)}–${formatNaira(ilaroMax)}`}
-              </p>
+              {couponMsg && <p className={`mt-2 text-xs ${discount > 0 ? "text-emerald-700" : "text-red-600"}`}>{couponMsg}</p>}
+              <div className="my-5 border-t border-stone-200" />
+              <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
+              {discount > 0 && <SummaryRow label="Discount" value={`−${formatNaira(discount)}`} green />}
+              <div className="mt-2"><SummaryRow label={isPickup ? "Pickup" : "Delivery estimate"} value={isPickup ? "Free" : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`} /></div>
+              {!isPickup && <p className="mt-2 text-[11px] leading-5 text-stone-400">Final delivery fee is confirmed with you. It is not included in the order total below.</p>}
+              <div className="my-5 border-t border-stone-200" />
+              <div className="mb-5 flex items-center justify-between"><span className="text-sm font-semibold text-stone-800">Total</span><span className="text-xl font-semibold text-[#762d38]">{formatNaira(total)}</span></div>
+              <button type="submit" disabled={placing || items.length === 0} className="w-full rounded-md bg-[#762d38] px-5 py-4 text-sm font-semibold tracking-wide text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">{placing ? "Placing your order…" : "Place order"}</button>
+              <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-stone-400"><Lock size={12} /> Secure order submission</p>
             </div>
-          </div>
+            <p className="mt-4 text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={`https://wa.me/${settings?.whatsapp_number || "2348103173658"}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
+          </aside>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
 
-function Field({ label, value, onChange, type = "text", required, className = "" }) {
-  return (
-    <div className={`space-y-2 ${className}`}>
-      <label className="text-[10px] tracking-luxe-sm text-gold uppercase">{label}{required && " *"}</label>
-      <input type={type} value={value} onChange={(e) => onChange(e.target.value)} required={required}
-        className="w-full bg-transparent border border-gold/25 px-4 py-3 text-cream text-sm outline-none focus:border-gold transition-colors" />
-    </div>
-  );
+function Step({ number, label, active }) {
+  return <div className={`flex items-center gap-2 ${active ? "text-[#762d38]" : "text-stone-400"}`}><span className={`flex h-7 w-7 items-center justify-center rounded-full border text-[10px] ${active ? "border-[#762d38] bg-[#762d38] text-white" : "border-stone-300"}`}>{number}</span><span>{label}</span></div>;
+}
+
+function SectionHeading({ icon, title, subtitle }) {
+  return <div className="mb-5 flex items-start gap-3"><span className="rounded-md bg-[#762d38]/[0.07] p-2 text-[#762d38]">{icon}</span><div><h2 className="font-heading text-xl text-stone-900">{title}</h2><p className="mt-1 text-xs text-stone-500">{subtitle}</p></div></div>;
+}
+
+function SummaryRow({ label, value, strong, green }) {
+  return <div className="mb-2 flex items-start justify-between gap-4 text-xs"><span className="text-stone-500">{label}</span><span className={`text-right ${strong ? "font-semibold text-stone-900" : green ? "font-medium text-emerald-700" : "text-stone-700"}`}>{value}</span></div>;
 }
