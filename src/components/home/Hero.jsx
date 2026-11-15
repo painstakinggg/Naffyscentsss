@@ -9,7 +9,7 @@ export default function Hero() {
   const subtext = settings?.hero_subtext || "Discover fragrances crafted to leave a lasting impression.";
 
   return (
-    <section className="relative h-[100svh] min-h-[600px] w-full overflow-hidden bg-obsidian">
+    <section className="hero-section relative h-[100svh] min-h-[600px] w-full overflow-hidden bg-obsidian">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
