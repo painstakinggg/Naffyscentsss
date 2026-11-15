@@ -4,7 +4,7 @@ import { Instagram, Facebook, MessageCircle } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 import { Image } from "@/components/ui/image";
 
-const LOGO_URL = "https://base44.app/api/apps/6aa9c58b774c337069ac009e/files/mp/public/6aa9c58b774c337069ac009e/1b75b90f3_logo-maroon-beige.png";
+const LOGO_URL = "/favicon.svg";
 
 // Snapchat icon (not in lucide)
 function SnapchatIcon({ size = 18 }) {
