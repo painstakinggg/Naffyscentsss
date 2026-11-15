@@ -198,15 +198,46 @@ export default function Checkout() {
 
   return (
     <main className="min-h-screen bg-[#faf9f6] pb-20 pt-28 text-stone-800 sm:pt-32">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mb-9 text-center">
-          <h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Checkout</h1>
+      <div className="mx-auto max-w-xl px-4 sm:px-5">
+        <div className="mb-7 text-center">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#762d38]">NAFFY SCENTS</p><h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Secure checkout</h1><p className="mt-2 text-xs text-stone-500">Complete your details to place your order.</p>
 
         </div>
 
-        <form onSubmit={placeOrder} className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_370px] lg:gap-8">
+        <form onSubmit={placeOrder} className="mx-auto max-w-xl space-y-5">
+          <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+            <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
+              <button type="button" onClick={() => setSummaryOpen(v => !v)} className="flex w-full items-center justify-between text-left"><span className="font-heading text-xl text-stone-900">Order summary</span><ChevronDown size={18} className={`transition-transform ${summaryOpen ? "rotate-180" : ""}`} /></button>
+              <p className="mt-1 text-xs text-stone-500">{items.reduce((n, item) => n + item.quantity, 0)} item(s) in your bag</p>
+              {summaryOpen && <div className="my-5 space-y-4">
+                {items.map((item) => (
+                  <div key={`${item.id}-${item.size_ml}`} className="flex gap-3">
+                    <div className="h-16 w-14 shrink-0 overflow-hidden rounded-md bg-[#f3f0ec]"><img src={item.image} alt={item.name} className="h-full w-full object-cover" /></div>
+                    <div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-medium text-stone-800">{item.name}</p><p className="mt-1 text-[11px] text-stone-500">{item.is_bundle ? "Bundle" : `${item.size_ml}ml`} · Qty {item.quantity}</p></div>
+                    <span className="whitespace-nowrap text-xs font-medium text-stone-700">{formatNaira(item.price * item.quantity)}</span>
+                  </div>
+                ))}
+              </div>}
+              <div className="flex gap-2">
+                <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-200 px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
+                <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] hover:bg-[#762d38]/5">Apply</button>
+              </div>
+              {couponMsg && <p className={`mt-2 text-xs ${discount > 0 ? "text-emerald-700" : "text-red-600"}`}>{couponMsg}</p>}
+              <div className="my-5 border-t border-stone-200" />
+              <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
+              {discount > 0 && <SummaryRow label="Discount" value={`−${formatNaira(discount)}`} green />}
+              <div className="mt-2"><SummaryRow label={isPickup ? "Pickup" : "Delivery estimate"} value={isPickup ? "Free" : deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`} /></div>
+              {!isPickup && <p className="mt-2 text-[11px] leading-5 text-stone-400">Final delivery fee is confirmed with you. It is not included in the order total below.</p>}
+              <div className="my-5 border-t border-stone-200" />
+              <div className="mb-5 flex items-center justify-between"><span className="text-sm font-semibold text-stone-800">Total</span><span className="text-xl font-semibold text-[#762d38]">{formatNaira(total)}</span></div>
+              <button type="submit" disabled={placing || items.length === 0} className="w-full rounded-md bg-[#762d38] px-5 py-4 text-sm font-semibold tracking-wide text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">{placing ? "Placing your order…" : "Place order"}</button>
+              <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-stone-400"><Lock size={12} /> Secure order submission</p>
+            </div>
+            <p className="mt-4 text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={`https://wa.me/${settings?.whatsapp_number || "2348103173658"}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
+</section>
+
           <div className="space-y-5">
-            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
+            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
               <SectionHeading icon={<ShoppingBag size={17} />} title="Your details" subtitle="Tell us who we’re preparing this order for." />
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div><label className={labelClass}>First name <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} autoComplete="given-name" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="First name" /></div>
@@ -257,36 +288,7 @@ export default function Checkout() {
             </section>
           </div>
 
-          <aside className="lg:sticky lg:top-24">
-            <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
-              <button type="button" onClick={() => setSummaryOpen(v => !v)} className="flex w-full items-center justify-between text-left"><span className="font-heading text-xl text-stone-900">Order summary</span><ChevronDown size={18} className={`transition-transform ${summaryOpen ? "rotate-180" : ""}`} /></button>
-              <p className="mt-1 text-xs text-stone-500">{items.reduce((n, item) => n + item.quantity, 0)} item(s) in your bag</p>
-              {summaryOpen && <div className="my-5 space-y-4">
-                {items.map((item) => (
-                  <div key={`${item.id}-${item.size_ml}`} className="flex gap-3">
-                    <div className="h-16 w-14 shrink-0 overflow-hidden rounded-md bg-[#f3f0ec]"><img src={item.image} alt={item.name} className="h-full w-full object-cover" /></div>
-                    <div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-medium text-stone-800">{item.name}</p><p className="mt-1 text-[11px] text-stone-500">{item.is_bundle ? "Bundle" : `${item.size_ml}ml`} · Qty {item.quantity}</p></div>
-                    <span className="whitespace-nowrap text-xs font-medium text-stone-700">{formatNaira(item.price * item.quantity)}</span>
-                  </div>
-                ))}
-              </div>}
-              <div className="flex gap-2">
-                <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-200 px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
-                <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] hover:bg-[#762d38]/5">Apply</button>
-              </div>
-              {couponMsg && <p className={`mt-2 text-xs ${discount > 0 ? "text-emerald-700" : "text-red-600"}`}>{couponMsg}</p>}
-              <div className="my-5 border-t border-stone-200" />
-              <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
-              {discount > 0 && <SummaryRow label="Discount" value={`−${formatNaira(discount)}`} green />}
-              <div className="mt-2"><SummaryRow label={isPickup ? "Pickup" : "Delivery estimate"} value={isPickup ? "Free" : deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`} /></div>
-              {!isPickup && <p className="mt-2 text-[11px] leading-5 text-stone-400">Final delivery fee is confirmed with you. It is not included in the order total below.</p>}
-              <div className="my-5 border-t border-stone-200" />
-              <div className="mb-5 flex items-center justify-between"><span className="text-sm font-semibold text-stone-800">Total</span><span className="text-xl font-semibold text-[#762d38]">{formatNaira(total)}</span></div>
-              <button type="submit" disabled={placing || items.length === 0} className="w-full rounded-md bg-[#762d38] px-5 py-4 text-sm font-semibold tracking-wide text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">{placing ? "Placing your order…" : "Place order"}</button>
-              <p className="mt-4 flex items-center justify-center gap-2 text-[11px] text-stone-400"><Lock size={12} /> Secure order submission</p>
-            </div>
-            <p className="mt-4 text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={`https://wa.me/${settings?.whatsapp_number || "2348103173658"}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
-          </aside>
+
         </form>
       </div>
     </main>
