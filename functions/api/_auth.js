@@ -69,7 +69,7 @@ export const publicUser = (user) => user ? ({
 }) : null;
 
 export function validEmail(value) {
-  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value) && value.length <= 254;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
 }
 
 export async function requireAdmin(request, db) {
