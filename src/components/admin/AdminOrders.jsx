@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiGet, apiPatch } from "@/lib/api";
 import { formatNaira } from "@/lib/images";
 import { X, Eye } from "lucide-react";
 
@@ -27,8 +27,8 @@ export default function AdminOrders() {
   const load = async () => {
     setLoading(true);
     try {
-      const list = await base44.entities.Order.list("-created_date", 100);
-      setOrders(list || []);
+      const data = await apiGet("/admin/orders");
+      setOrders(data.orders || []);
     } catch (e) {}
     setLoading(false);
   };
@@ -36,7 +36,7 @@ export default function AdminOrders() {
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id, status) => {
-    await base44.entities.Order.update(id, { status });
+    await apiPatch(`/admin/orders/${id}`, { status });
     setView((v) => (v && v.id === id ? { ...v, status } : v));
     load();
   };
