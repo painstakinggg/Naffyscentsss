@@ -7,7 +7,7 @@ import { formatNaira } from "@/lib/images";
 import { Check, Lock, Truck, MessageCircle } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
-const LOGO_URL = "https://base44.app/api/apps/6aa9c58b774c337069ac009e/files/mp/public/6aa9c58b774c337069ac009e/1b75b90f3_logo-maroon-beige.png";
+const LOGO_URL = "/favicon.svg";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
