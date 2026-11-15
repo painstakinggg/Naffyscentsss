@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/product/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
 import Reveal from "@/components/ui/Reveal";
 
 export default function SignatureCollection() {
   const { products, loading } = useProducts({ featured: true });
-  const display = products.length > 0 ? products.slice(0, 4) : [];
+  const display = products.filter((product) => !product.is_bundle).slice(0, 4);
 
   return (
     <section className="py-20 sm:py-28 px-5 sm:px-8 max-w-[1400px] mx-auto">
@@ -16,19 +18,31 @@ export default function SignatureCollection() {
       </Reveal>
 
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="aspect-[3/4] bg-obsidian-soft animate-pulse" />
           ))}
         </div>
+      ) : display.length > 0 ? (
+        <>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-6">
+            {display.map((product, index) => (
+              <Reveal key={product.id} delay={index * 0.08}>
+                <ProductCard product={product} badge="Featured" />
+              </Reveal>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link
+              to="/shop?featured=true"
+              className="btn-outline-gold inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] tracking-luxe-sm uppercase"
+            >
+              View Signature Collection <ArrowRight size={14} />
+            </Link>
+          </div>
+        </>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {display.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.1}>
-              <ProductCard product={p} badge={p.bestseller ? "Best Seller" : null} />
-            </Reveal>
-          ))}
-        </div>
+        <p className="text-center text-sm text-cream/55">Our signature fragrances are being prepared. Please check back shortly.</p>
       )}
     </section>
   );
