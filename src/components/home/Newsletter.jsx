@@ -18,7 +18,7 @@ export default function Newsletter() {
 
   return (
     <section className="py-24 sm:py-32 px-5 sm:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-obsidian-soft to-obsidian" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F6] to-white" />
       <Reveal className="relative z-10 max-w-2xl mx-auto text-center">
         <p className="text-[11px] tracking-luxe text-gold uppercase mb-5">Newsletter</p>
         <h2 className="font-heading text-3xl sm:text-5xl text-cream mb-5">Enter the World of Naffy</h2>
