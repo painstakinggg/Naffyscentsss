@@ -21,14 +21,15 @@ export default function AdminAnalytics() {
 
   if (loading) return <div className="text-cream/50 text-center py-12">Loading analytics...</div>;
 
-  const totalRevenue = orders.reduce((s, o) => s + (o.total || 0), 0);
+  const paidOrders = orders.filter((o) => o.payment_status === "Paid");
+  const totalRevenue = paidOrders.reduce((s, o) => s + (Number(o.total) || 0), 0);
   const totalOrders = orders.length;
   const customers = new Set(orders.map((o) => o.phone)).size;
-  const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+  const avgOrder = paidOrders.length > 0 ? totalRevenue / paidOrders.length : 0;
 
-  // best sellers by quantity in orders
+  // Count completed sales only after payment has been verified.
   const sales = {};
-  orders.forEach((o) => {
+  paidOrders.forEach((o) => {
     (o.items || []).forEach((it) => {
       sales[it.name] = (sales[it.name] || 0) + (it.quantity || 0);
     });
@@ -36,10 +37,10 @@ export default function AdminAnalytics() {
   const bestSellers = Object.entries(sales).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
   const stats = [
-    { icon: TrendingUp, label: "Total Revenue", value: formatNaira(totalRevenue) },
+    { icon: TrendingUp, label: "Verified Revenue", value: formatNaira(totalRevenue) },
     { icon: ShoppingBag, label: "Total Orders", value: totalOrders },
     { icon: Users, label: "Customers", value: customers },
-    { icon: Package, label: "Avg Order Value", value: formatNaira(avgOrder) },
+    { icon: Package, label: "Avg Paid Order", value: formatNaira(avgOrder) },
   ];
 
   return (
