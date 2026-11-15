@@ -11,7 +11,14 @@ export default function Testimonials() {
     (async () => {
       try {
         const list = await base44.entities.Review.filter({ featured: true, status: "Approved" });
-        setReviews(list || []);
+        const reviewItems = Array.isArray(list)
+          ? list
+          : Array.isArray(list?.data)
+            ? list.data
+            : Array.isArray(list?.items)
+              ? list.items
+              : [];
+        setReviews(reviewItems);
       } catch (e) {
         setReviews([]);
       }
