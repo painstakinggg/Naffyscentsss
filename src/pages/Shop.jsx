@@ -28,6 +28,8 @@ export default function Shop() {
   const sort = params.get("sort") || "newest";
   const maxPrice = params.get("maxPrice") || "";
   const type = params.get("type") || "";
+  const bestseller = params.get("bestseller") === "true";
+  const featured = params.get("featured") === "true";
 
   useEffect(() => {
     (async () => {
@@ -63,13 +65,16 @@ export default function Shop() {
     if (availability === "in") r = r.filter((p) => p.available);
     if (type === "bundle") r = r.filter((p) => p.is_bundle);
     else if (type === "single") r = r.filter((p) => !p.is_bundle);
+    if (bestseller) r = r.filter((p) => p.bestseller && !p.is_bundle);
+    if (featured) r = r.filter((p) => p.featured && !p.is_bundle);
     if (maxPrice) r = r.filter((p) => p.price <= Number(maxPrice));
 
     if (sort === "price-low") r.sort((a, b) => a.price - b.price);
     else if (sort === "price-high") r.sort((a, b) => b.price - a.price);
     else if (sort === "popular") r.sort((a, b) => (b.review_count || 0) - (a.review_count || 0));
+    else if (sort === "newest") r.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
     return r;
-  }, [allProducts, search, category, family, gender, availability, maxPrice, type, sort]);
+  }, [allProducts, search, category, family, gender, availability, maxPrice, type, sort, bestseller, featured]);
 
   const update = (key, val) => {
     const next = new URLSearchParams(params);
@@ -79,19 +84,17 @@ export default function Shop() {
 
   const clearAll = () => setParams(new URLSearchParams());
 
-  const activeFilters = [category, family, gender, availability, maxPrice, search, type].filter(Boolean).length;
+  const activeFilters = [category, family, gender, availability, maxPrice, search, type, bestseller, featured].filter(Boolean).length;
 
   return (
     <div className="pt-28 pb-20 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-5 sm:px-8">
-        {/* Header */}
         <div className="text-center mb-10">
           <p className="text-[11px] tracking-luxe text-gold uppercase mb-3">The Collection</p>
           <h1 className="font-heading text-4xl sm:text-6xl text-cream">Shop All Fragrances</h1>
           <p className="text-sm text-cream/50 mt-4">{filtered.length} {filtered.length === 1 ? "fragrance" : "fragrances"} available</p>
         </div>
 
-        {/* Search + sort bar */}
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
           <div className="flex-1 flex items-center gap-2 border border-gold/20 px-4 py-3">
             <Search size={16} className="text-gold" />
@@ -118,7 +121,6 @@ export default function Shop() {
         </div>
 
         <div className="flex gap-8">
-          {/* Desktop filters */}
           <aside className="hidden lg:block w-60 shrink-0">
             <FilterPanel
               category={category} family={family} gender={gender} availability={availability}
@@ -126,7 +128,6 @@ export default function Shop() {
             />
           </aside>
 
-          {/* Products */}
           <div className="flex-1">
             {loading ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -147,7 +148,6 @@ export default function Shop() {
         </div>
       </div>
 
-      {/* Mobile filter drawer */}
       {showFilters && (
         <div className="fixed inset-0 z-[70] lg:hidden">
           <div className="absolute inset-0 bg-obsidian/80 backdrop-blur-sm" onClick={() => setShowFilters(false)} />
