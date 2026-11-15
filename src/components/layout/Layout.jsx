@@ -6,12 +6,9 @@ import WhatsAppButton from "./WhatsAppButton";
 
 export default function Layout() {
   const { pathname } = useLocation();
-  // Checkout owns its focused header and footer treatment; do not render the
-  // storefront chrome on top of it.
-  const isCheckout = pathname === "/checkout";
   return (
     <div className="min-h-screen bg-obsidian flex flex-col">
-      {!isCheckout && <Navbar />}
+      <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
