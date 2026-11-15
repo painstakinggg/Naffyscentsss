@@ -36,7 +36,10 @@ export default function AdminSetup() {
         body: JSON.stringify({ email: ADMIN_EMAIL, token, password, full_name: "NAFFY SCENTS Administrator" }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Unable to set up administrator access.");
+      if (!response.ok) {
+        const stageDetail = data.stage ? ` (failed at: ${data.stage})` : "";
+        throw new Error(`${data.error || "Unable to set up administrator access."}${stageDetail}`);
+      }
       await checkUserAuth();
       navigate("/admin", { replace: true });
     } catch (err) {
