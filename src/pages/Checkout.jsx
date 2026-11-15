@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
 import { useStore } from "@/lib/store-context";
 import { formatNaira } from "@/lib/images";
-import { Check, Lock, Truck, MessageCircle, ArrowLeft, ShoppingBag, MapPin, CreditCard } from "lucide-react";
+import { Check, Lock, Truck, MessageCircle, ArrowLeft, ShoppingBag, MapPin, CreditCard, ChevronDown } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
 const LOGO_URL = "/favicon.svg";
@@ -22,11 +22,12 @@ export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
   const { settings } = useStore();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ customer_name: "", customer_email: "", phone: "", address: "", apartment: "", postal_code: "", customer_instructions: "", city: "", state: "Lagos" });
+  const [form, setForm] = useState({ customer_name: "", customer_email: "", phone: "", address: "", apartment: "", postal_code: "", customer_instructions: "", city: "", state: "Ogun" });
   const [deliveryZone, setDeliveryZone] = useState("ilaro");
   const [fulfilment, setFulfilment] = useState("delivery");
   const isPickup = fulfilment === "pickup";
   const [coupon, setCoupon] = useState("");
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [couponMsg, setCouponMsg] = useState("");
   const [placing, setPlacing] = useState(false);
@@ -239,7 +240,7 @@ export default function Checkout() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <button type="button" onClick={() => setFulfilment("delivery")} className={`rounded-lg border p-4 text-left transition ${!isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]/10" : "border-stone-200 hover:border-stone-400"}`}>
                   <span className="mb-2 flex items-center justify-between text-sm font-semibold text-stone-800">Home delivery <Truck size={17} className="text-[#762d38]" /></span>
-                  <span className="block text-xs leading-5 text-stone-500">Via {logisticsProvider}. Ilaro estimate: {formatNaira(ilaroMin)} – {formatNaira(ilaroMax)}.</span>
+                  <span className="block text-xs leading-5 text-stone-500">Via {logisticsProvider}. Estimated fee: {deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`}.</span>
                 </button>
                 <button type="button" onClick={() => setFulfilment("pickup")} className={`rounded-lg border p-4 text-left transition ${isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]/10" : "border-stone-200 hover:border-stone-400"}`}>
                   <span className="mb-2 flex items-center justify-between text-sm font-semibold text-stone-800">Store pickup <ShoppingBag size={17} className="text-[#762d38]" /></span>
@@ -277,9 +278,9 @@ export default function Checkout() {
 
           <aside className="lg:sticky lg:top-24">
             <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
-              <h2 className="font-heading text-xl text-stone-900">Order summary</h2>
+              <button type="button" onClick={() => setSummaryOpen(v => !v)} className="flex w-full items-center justify-between text-left"><span className="font-heading text-xl text-stone-900">Order summary</span><ChevronDown size={18} className={`transition-transform ${summaryOpen ? "rotate-180" : ""}`} /></button>
               <p className="mt-1 text-xs text-stone-500">{items.reduce((n, item) => n + item.quantity, 0)} item(s) in your bag</p>
-              <div className="my-5 space-y-4">
+              {summaryOpen && <div className="my-5 space-y-4">
                 {items.map((item) => (
                   <div key={`${item.id}-${item.size_ml}`} className="flex gap-3">
                     <div className="h-16 w-14 shrink-0 overflow-hidden rounded-md bg-[#f3f0ec]"><img src={item.image} alt={item.name} className="h-full w-full object-cover" /></div>
@@ -287,7 +288,7 @@ export default function Checkout() {
                     <span className="whitespace-nowrap text-xs font-medium text-stone-700">{formatNaira(item.price * item.quantity)}</span>
                   </div>
                 ))}
-              </div>
+              </div>}
               <div className="flex gap-2">
                 <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-200 px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
                 <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] hover:bg-[#762d38]/5">Apply</button>
@@ -296,7 +297,7 @@ export default function Checkout() {
               <div className="my-5 border-t border-stone-200" />
               <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
               {discount > 0 && <SummaryRow label="Discount" value={`−${formatNaira(discount)}`} green />}
-              <div className="mt-2"><SummaryRow label={isPickup ? "Pickup" : "Delivery estimate"} value={isPickup ? "Free" : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`} /></div>
+              <div className="mt-2"><SummaryRow label={isPickup ? "Pickup" : "Delivery estimate"} value={isPickup ? "Free" : deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`} /></div>
               {!isPickup && <p className="mt-2 text-[11px] leading-5 text-stone-400">Final delivery fee is confirmed with you. It is not included in the order total below.</p>}
               <div className="my-5 border-t border-stone-200" />
               <div className="mb-5 flex items-center justify-between"><span className="text-sm font-semibold text-stone-800">Total</span><span className="text-xl font-semibold text-[#762d38]">{formatNaira(total)}</span></div>
