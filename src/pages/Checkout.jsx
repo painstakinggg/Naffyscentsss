@@ -31,6 +31,8 @@ export default function Checkout() {
   const [placing, setPlacing] = useState(false);
   const [order, setOrder] = useState(null);
   const [paidStatus, setPaidStatus] = useState("idle");
+  const [paymentReference, setPaymentReference] = useState("");
+  const [paymentProof, setPaymentProof] = useState(null);
 
   const ilaroMin = settings?.delivery_fee_ilaro_min ?? 1000;
   const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
@@ -102,9 +104,18 @@ export default function Checkout() {
 
   const handleConfirmPayment = async () => {
     if (paidStatus === "submitting" || paidStatus === "submitted") return;
+    if (!paymentReference.trim()) { setPaidStatus("error"); return; }
     setPaidStatus("submitting");
     try {
-      const response = await fetch(`/api/orders/${order.id}/payment-confirmation`, { method: "POST" });
+      let proofKey = "";
+      if (paymentProof) {
+        const body = new FormData(); body.append("file", paymentProof);
+        const upload = await fetch(`/api/payment-proof/${order.id}`, { method: "POST", body });
+        const uploaded = await upload.json();
+        if (!upload.ok) throw new Error(uploaded.error || "Screenshot upload failed");
+        proofKey = uploaded.key;
+      }
+      const response = await fetch(`/api/orders/${order.id}/payment-confirmation`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ transaction_reference: paymentReference.trim(), payment_proof_key: proofKey }) });
       if (!response.ok) throw new Error("Could not submit payment confirmation");
       setPaidStatus("submitted");
     } catch {
@@ -163,10 +174,12 @@ export default function Checkout() {
                 <a href={waUrl} target="_blank" rel="noopener noreferrer" className="mb-3 flex w-full items-center justify-center gap-2 rounded-md border border-[#762d38] px-4 py-3 text-sm font-semibold text-[#762d38] transition hover:bg-[#762d38]/5">
                   <MessageCircle size={16} /> Send payment proof on WhatsApp
                 </a>
+                <div className="mb-3"><label className={labelClass}>Transaction reference *</label><input value={paymentReference} onChange={(e) => setPaymentReference(e.target.value)} placeholder="Bank transfer reference" className={inputClass} required /></div>
+                <div className="mb-4"><label className={labelClass}>Payment screenshot (optional · JPG/PNG/WebP · max 5 MB)</label><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => { const file=e.target.files?.[0]; if (!file) return; if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size>5*1024*1024) { setPaidStatus("error"); return; } setPaymentProof(file); setPaidStatus("idle"); }} className="w-full text-xs text-stone-600" />{paymentProof && <p className="mt-1 text-xs text-stone-500">{paymentProof.name} <button type="button" onClick={() => setPaymentProof(null)} className="ml-2 text-[#762d38] underline">Remove</button></p>}</div>
                 <button onClick={handleConfirmPayment} disabled={paidStatus === "submitting"} className="w-full rounded-md bg-[#762d38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#60232d] disabled:opacity-50">
                   {paidStatus === "submitting" ? "Submitting…" : "I've made the transfer"}
                 </button>
-                {paidStatus === "error" && <p className="mt-2 text-xs text-red-600">Could not submit confirmation. Please try again.</p>}
+                {paidStatus === "error" && <p className="mt-2 text-xs text-red-600">Please check your transaction reference and screenshot (JPG, PNG or WebP up to 5 MB), then try again.</p>}
                 <p className="mt-3 text-xs leading-5 text-stone-500">Your payment is not marked as complete until our team verifies it.</p>
               </div>
             )}
