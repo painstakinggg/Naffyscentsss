@@ -134,6 +134,10 @@ export default function AdminOrders() {
               <div className="luxury-line my-3" />
               <Row label="Payment Status" value={view.payment_status} />
               <Row label="Payment Confirmation" value={view.payment_confirmation_submitted ? `Submitted — ${view.payment_confirmation_date || ""}` : "Not submitted"} />
+              {view.transaction_reference && <Row label="Transaction Reference" value={view.transaction_reference} />}
+              {view.customer_instructions && <Row label="Customer Instructions" value={view.customer_instructions} />}
+              {view.delivery_zone && <Row label="Delivery Destination" value={view.delivery_zone} />}
+              {view.has_payment_proof && <a href={`/api/admin/payment-proof/${view.id}`} target="_blank" rel="noreferrer" className="inline-flex rounded-md border border-gold/30 px-3 py-2 text-xs font-semibold text-gold hover:bg-gold/10">View payment screenshot</a>}
               <div className="space-y-2">
                 <label className="text-[10px] tracking-luxe-sm text-gold uppercase">Record Payment Verification</label>
                 <select value={view.payment_status} onChange={(e) => updatePaymentStatus(view.id, e.target.value)}
