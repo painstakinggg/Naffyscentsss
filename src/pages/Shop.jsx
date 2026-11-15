@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import ProductCard from "@/components/product/ProductCard";
 import { SlidersHorizontal, X, Search } from "lucide-react";
 
@@ -33,8 +32,12 @@ export default function Shop() {
   useEffect(() => {
     (async () => {
       try {
-        const list = await base44.entities.Product.list("-created_date", 100);
-        setAllProducts(list || []);
+        const response = await fetch("/api/products");
+        if (!response.ok) {
+          throw new Error("Unable to load products from the store database");
+        }
+        const data = await response.json();
+        setAllProducts(Array.isArray(data.products) ? data.products : []);
       } catch (e) {
         setAllProducts([]);
       } finally {
