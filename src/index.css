@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Tenor+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -26,9 +26,9 @@
     --input: 20 10% 88%;
     --ring: 0 39% 47%;
     --radius: 0.25rem;
-    --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
-    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Tenor Sans', ui-sans-serif, sans-serif;
+    --font-heading: 'Noto Sans JP', 'Noto Sans Japanese', sans-serif;
+    --font-body: 'Noto Sans JP', 'Noto Sans Japanese', sans-serif;
+    --font-display: 'Noto Sans JP', 'Noto Sans Japanese', sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
     --gold: #A84A4A;
@@ -109,10 +109,10 @@
 
 @layer components {
   .font-display {
-    font-family: 'Tenor Sans', sans-serif;
+    font-family: 'Noto Sans JP', 'Noto Sans Japanese', sans-serif;
   }
   .font-heading {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Noto Sans JP', 'Noto Sans Japanese', sans-serif;
   }
 
   .text-gold {
