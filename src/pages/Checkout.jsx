@@ -137,10 +137,6 @@ export default function Checkout() {
     return (
       <main className="min-h-screen bg-[#faf9f6] px-5 pb-20 pt-12 text-stone-800 sm:pt-16">
         <div className="mx-auto max-w-xl">
-          <div className="mb-10 flex items-center justify-center gap-3">
-            <Image src={LOGO_URL} alt="Naffy Scents" fittingType="fit" className="h-12 w-auto object-contain" />
-            <span className="font-heading text-xl font-semibold tracking-[0.12em] text-[#762d38]">NAFFY SCENTS</span>
-          </div>
           <div className="rounded-2xl border border-stone-200 bg-white p-7 text-center shadow-sm sm:p-10">
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#762d38]/10 text-[#762d38]">
               <Check size={30} strokeWidth={1.7} />
@@ -204,15 +200,6 @@ export default function Checkout() {
   return (
     <main className="min-h-screen bg-[#faf9f6] pb-20 pt-8 text-stone-800 sm:pt-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="mb-8 flex items-center justify-between">
-          <Link to="/cart" className="inline-flex items-center gap-2 text-sm text-stone-600 transition hover:text-[#762d38]"><ArrowLeft size={16} /> Back to bag</Link>
-          <Link to="/" className="flex items-center gap-2">
-            <Image src={LOGO_URL} alt="Naffy Scents" fittingType="fit" className="h-9 w-auto object-contain" />
-            <span className="font-heading text-sm font-semibold tracking-[0.13em] text-[#762d38] sm:text-base">NAFFY SCENTS</span>
-          </Link>
-          <span className="hidden items-center gap-1.5 text-xs text-stone-500 sm:flex"><Lock size={13} /> Secure checkout</span>
-        </div>
-
         <div className="mb-9 text-center">
           <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#762d38]">The art of fragrance</p>
           <h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Checkout</h1>
