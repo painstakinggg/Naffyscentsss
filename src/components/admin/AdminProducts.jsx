@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { formatNaira } from "@/lib/images";
 import { Plus, Pencil, Trash2, X, Upload, Star } from "lucide-react";
 
@@ -29,8 +29,8 @@ export default function AdminProducts() {
   const load = async () => {
     setLoading(true);
     try {
-      const list = await base44.entities.Product.list("-created_date", 100);
-      setProducts(list || []);
+      const data = await apiGet("/admin/products");
+      setProducts(data.products || []);
     } catch (e) {}
     setLoading(false);
   };
@@ -46,9 +46,9 @@ export default function AdminProducts() {
     try {
       const data = { ...form, price: Number(form.price), compare_at_price: Number(form.compare_at_price) || 0, stock: Number(form.stock) || 0, size_ml: Number(form.size_ml) || 100 };
       if (editing === "new") {
-        await base44.entities.Product.create(data);
+        await apiPost("/admin/products", data);
       } else {
-        await base44.entities.Product.update(editing, data);
+        await apiPatch(`/admin/products/${editing}`, data);
       }
       setEditing(null);
       load();
@@ -60,14 +60,17 @@ export default function AdminProducts() {
 
   const remove = async (p) => {
     if (!confirm(`Delete "${p.name}"?`)) return;
-    await base44.entities.Product.delete(p.id);
+    await apiDelete(`/admin/products/${p.id}`);
     load();
   };
 
   const uploadImage = async (file) => {
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadPublicFile({ file });
+      const form = new FormData(); form.append("file", file);
+      const response = await fetch("/api/admin/upload", { method: "POST", credentials: "include", body: form });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error || "Upload failed");
+      const { file_url } = result;
       setForm((f) => ({ ...f, images: [...f.images, file_url] }));
     } catch (e) {
       alert("Upload failed");
