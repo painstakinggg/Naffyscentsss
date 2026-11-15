@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+
 
 const StoreContext = createContext(null);
 
@@ -9,32 +9,10 @@ export function StoreProvider({ children }) {
 
   const loadSettings = useCallback(async () => {
     try {
-      const list = await base44.entities.StoreSettings.list();
-      if (list && list.length > 0) {
-        setSettings(list[0]);
-      } else {
-        // create default settings
-        const created = await base44.entities.StoreSettings.create({
-          whatsapp_number: "2348012345678",
-          instagram_handle: "naffyscents",
-          tiktok_handle: "naffyscents",
-          facebook_handle: "naffyscents",
-          delivery_fee_lagos: 2500,
-          delivery_fee_nationwide: 4500,
-          pickup_hours: "12:00 PM – 5:00 PM",
-          logistics_provider: "Josh Logistics",
-          delivery_fee_ilaro_min: 1000,
-          delivery_fee_ilaro_max: 2000,
-          delivery_info_note: "Delivery within Ilaro: ₦1,000 – ₦2,000 via Josh Logistics",
-          contact_email: "hello@naffyscents.com",
-          business_hours: "",
-          bank_name: "",
-          account_name: "",
-          account_number: "",
-          payment_instructions: "",
-        });
-        setSettings(created);
-      }
+      const response = await fetch("/api/store-settings", { headers: { accept: "application/json" } });
+      if (!response.ok) throw new Error("Unable to load store settings");
+      const data = await response.json();
+      setSettings(data.settings || {});
     } catch (e) {
       // fallback defaults
       setSettings({
