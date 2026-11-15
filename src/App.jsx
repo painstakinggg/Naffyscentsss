@@ -21,7 +21,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
-import OAuthConsent from './pages/OAuthConsent';
 import Layout from './components/layout/Layout';
 import { CartProvider } from './lib/cart-context';
 import { StoreProvider } from './lib/store-context';
@@ -77,7 +76,6 @@ const AuthenticatedApp = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/oauth/consent" element={<OAuthConsent />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
