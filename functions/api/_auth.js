@@ -10,10 +10,14 @@ export const json = (data, status = 200, headers = {}) => new Response(JSON.stri
 const toBase64Url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 const fromBase64Url = (value) => Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
 
-export async function hashPassword(password) {
+export async function hashPassword(password, onStage = () => {}) {
+  onStage("hash-generate-salt");
   const salt = crypto.getRandomValues(new Uint8Array(16));
+  onStage("hash-import-key");
   const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+  onStage("hash-derive-bits");
   const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: ITERATIONS }, key, 256);
+  onStage("hash-encode-result");
   return `pbkdf2_sha256$${ITERATIONS}$${toBase64Url(salt)}$${toBase64Url(bits)}`;
 }
 
@@ -65,7 +69,7 @@ export const publicUser = (user) => user ? ({
 }) : null;
 
 export function validEmail(value) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+  return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(value) && value.length <= 254;
 }
 
 export async function requireAdmin(request, db) {
