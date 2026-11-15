@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { label: "Contact", path: "/contact" },
 ];
 
-const LOGO_URL = "https://base44.app/api/apps/6aa9c58b774c337069ac009e/files/mp/public/6aa9c58b774c337069ac009e/1b75b90f3_logo-maroon-beige.png";
+const LOGO_URL = "/favicon.svg";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
