@@ -24,18 +24,9 @@ export default function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const me = await base44.auth.me();
-        setAuthed(isAppAdmin(me));
-      } catch (e) {
-        setAuthed(false);
-      }
-    })();
-  }, []);
 
-  if (authed === null) {
+
+  if (isLoadingAuth) {
     return <div className="pt-32 min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" /></div>;
   }
 
