@@ -201,7 +201,6 @@ export default function Checkout() {
     <main className="min-h-screen bg-[#faf9f6] pb-20 pt-8 text-stone-800 sm:pt-12">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-9 text-center">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#762d38]">The art of fragrance</p>
           <h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Checkout</h1>
           <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-[0.12em] sm:gap-6">
             <Step number="01" label="Bag" active />
