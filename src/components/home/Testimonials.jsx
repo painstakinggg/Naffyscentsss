@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 import StarRating from "@/components/product/StarRating";
 import Reveal from "@/components/ui/Reveal";
 import { BadgeCheck } from "lucide-react";
@@ -10,15 +9,10 @@ export default function Testimonials() {
   useEffect(() => {
     (async () => {
       try {
-        const list = await base44.entities.Review.filter({ featured: true, status: "Approved" });
-        const reviewItems = Array.isArray(list)
-          ? list
-          : Array.isArray(list?.data)
-            ? list.data
-            : Array.isArray(list?.items)
-              ? list.items
-              : [];
-        setReviews(reviewItems);
+        const response = await fetch("/api/reviews");
+        if (!response.ok) throw new Error("Unable to load reviews");
+        const data = await response.json();
+        setReviews(data.reviews || []);
       } catch (e) {
         setReviews([]);
       }
