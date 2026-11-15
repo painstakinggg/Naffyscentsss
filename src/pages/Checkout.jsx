@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
 import { useStore } from "@/lib/store-context";
-import { apiPost } from "@/lib/api";
+import { base44 } from "@/api/base44Client";
 import { formatNaira } from "@/lib/images";
 import { Check, Lock, Truck, MessageCircle } from "lucide-react";
 import { Image } from "@/components/ui/image";
@@ -45,9 +45,16 @@ export default function Checkout() {
   const applyCoupon = async () => {
     if (!coupon.trim()) return;
     try {
-      const result = await apiPost("/promotions/validate", { code: coupon.trim(), subtotal });
-      setDiscount(Number(result.discount) || 0);
-      setCouponMsg("Coupon applied");
+      const promos = await base44.entities.Promotion.filter({ code: coupon.trim(), active: true });
+      if (promos && promos.length > 0) {
+        const p = promos[0];
+        const d = p.discount_type === "percentage" ? Math.round((subtotal * p.discount_value) / 100) : p.discount_value;
+        setDiscount(d);
+        setCouponMsg("Coupon applied");
+      } else {
+        setDiscount(0);
+        setCouponMsg("Invalid coupon");
+      }
     } catch (e) {
       setCouponMsg("Could not verify coupon");
     }
@@ -57,19 +64,29 @@ export default function Checkout() {
     e.preventDefault();
     setPlacing(true);
     try {
-      const result = await apiPost("/orders", {
+      const created = await base44.entities.Order.create({
         ...form,
         customer_email: isPickup ? "" : form.customer_email,
         address: isPickup ? "" : form.address,
         city: isPickup ? "" : form.city,
         state: isPickup ? "" : form.state,
-        items: items.map((i) => ({ id: i.id, size_ml: i.size_ml, quantity: i.quantity })),
+        items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, size_ml: i.size_ml, quantity: i.quantity, image: i.image })),
         fulfilment_method: isPickup ? "Pickup" : "Logistics Delivery",
-        coupon_code: discount > 0 ? coupon.trim() : "",
+        subtotal,
+        delivery_fee: deliveryFee,
+        delivery_fee_min: isPickup ? 0 : ilaroMin,
+        delivery_fee_max: isPickup ? 0 : ilaroMax,
+        delivery_info_note: isPickup ? "" : `Delivery within Ilaro: ${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)} via ${logisticsProvider}`,
+        discount,
+        total,
+        status: "Awaiting Payment Confirmation",
+        payment_status: "Unpaid",
+        coupon_code: discount > 0 ? coupon : "",
       });
-      setOrder(result.order);
+      setOrder(created);
       clearCart();
       window.scrollTo(0, 0);
+      try { await base44.functions.invoke("sendOrderNotification", created); } catch (e) {}
     } catch (err) {
       alert("Could not place order. Please try again.");
     } finally {
@@ -81,7 +98,7 @@ export default function Checkout() {
     if (paidStatus === "submitting" || paidStatus === "submitted") return;
     setPaidStatus("submitting");
     try {
-      await apiPost(`/orders/${encodeURIComponent(order.id)}/payment-confirmation`, {});
+      const res = await base44.functions.invoke("confirmPayment", { orderId: order.id });
       setPaidStatus("submitted");
     } catch (e) {
       setPaidStatus("error");
