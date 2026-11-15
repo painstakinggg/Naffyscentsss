@@ -1,7 +1,7 @@
 import React from "react";
 import { Image } from "@/components/ui/image";
 
-const LOGO_URL = "https://base44.app/api/apps/6aa9c58b774c337069ac009e/files/mp/public/6aa9c58b774c337069ac009e/1b75b90f3_logo-maroon-beige.png";
+const LOGO_URL = "/favicon.svg";
 
 export default function AuthLayout({ title, subtitle, footer, children }) {
   return (
