@@ -1,18 +1,22 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import WhatsAppButton from "./WhatsAppButton";
 
 export default function Layout() {
+  const { pathname } = useLocation();
+  // Checkout owns its focused header and footer treatment; do not render the
+  // storefront chrome on top of it.
+  const isCheckout = pathname === "/checkout";
   return (
     <div className="min-h-screen bg-obsidian flex flex-col">
-      <Navbar />
+      {!isCheckout && <Navbar />}
       <main className="flex-1">
         <Outlet />
       </main>
-      <Footer />
-      <WhatsAppButton />
+      {!isCheckout && <Footer />}
+      {!isCheckout && <WhatsAppButton />}
     </div>
   );
 }
