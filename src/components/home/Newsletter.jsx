@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useStore } from "@/lib/store-context";
 import Reveal from "@/components/ui/Reveal";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Sparkles } from "lucide-react";
 
 export default function Newsletter() {
   const { settings } = useStore();
@@ -17,34 +17,41 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="py-24 sm:py-32 px-5 sm:px-8 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F6] to-white" />
-      <Reveal className="relative z-10 max-w-2xl mx-auto text-center">
-        <p className="text-[11px] tracking-luxe text-gold uppercase mb-5">Newsletter</p>
-        <h2 className="font-heading text-3xl sm:text-5xl text-cream mb-5">Enter the World of Naffy</h2>
-        <p className="text-sm text-cream/55 mb-10 max-w-md mx-auto leading-relaxed">{text}</p>
-
-        {done ? (
-          <div className="glass rounded-xl px-8 py-6 inline-flex items-center gap-3 text-sage animate-scale-in">
-            <Check size={20} />
-            <span className="text-sm">Welcome to the inner circle. Check your inbox.</span>
+    <section className="newsletter-section px-5 sm:px-8 py-20 sm:py-24 relative overflow-hidden">
+      <div className="newsletter-panel relative max-w-6xl mx-auto overflow-hidden rounded-2xl px-6 py-16 sm:px-12 sm:py-20 text-center">
+        <div className="newsletter-glow newsletter-glow-one" />
+        <div className="newsletter-glow newsletter-glow-two" />
+        <Reveal className="relative z-10 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-[10px] sm:text-[11px] tracking-luxe uppercase mb-5 newsletter-kicker">
+            <Sparkles size={13} /> The Naffy Letter
           </div>
-        ) : (
-          <form onSubmit={submit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
-              className="flex-1 bg-transparent border border-gold/25 px-5 py-4 text-cream placeholder:text-cream/40 text-sm outline-none focus:border-gold transition-colors"
-            />
-            <button type="submit" className="btn-gold px-8 py-4 inline-flex items-center justify-center gap-2 whitespace-nowrap">
-              Join the List <ArrowRight size={15} />
-            </button>
-          </form>
-        )}
-      </Reveal>
+          <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-5">A Little More Luxury, in Your Inbox</h2>
+          <p className="text-sm sm:text-base text-cream/70 mb-9 max-w-lg mx-auto leading-relaxed">{text}</p>
+
+          {done ? (
+            <div className="newsletter-success rounded-xl px-6 py-5 inline-flex items-center gap-3 animate-scale-in">
+              <Check size={20} />
+              <span className="text-sm">Welcome to the inner circle. Check your inbox.</span>
+            </div>
+          ) : (
+            <form onSubmit={submit} className="newsletter-form flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                aria-label="Email address"
+                className="flex-1 min-w-0 rounded-md px-5 py-4 text-sm outline-none transition-colors"
+              />
+              <button type="submit" className="newsletter-submit px-7 py-4 rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap">
+                Join the List <ArrowRight size={15} />
+              </button>
+            </form>
+          )}
+          <p className="relative z-10 mt-5 text-[10px] tracking-wide newsletter-note">Thoughtful updates only. Unsubscribe whenever you like.</p>
+        </Reveal>
+      </div>
     </section>
   );
 }
