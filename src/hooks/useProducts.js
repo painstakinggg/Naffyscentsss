@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { base44 } from "@/api/base44Client";
 
 export function useProducts(filters = {}) {
   const [products, setProducts] = useState([]);
@@ -8,19 +9,17 @@ export function useProducts(filters = {}) {
     let active = true;
     (async () => {
       try {
-        const response = await fetch("/api/products");
-        if (!response.ok) throw new Error("Unable to load products");
-        const data = await response.json();
+        const list = await base44.entities.Product.list("-created_date", 100);
         if (!active) return;
-        let filtered = Array.isArray(data.products) ? data.products : [];
+        let filtered = list || [];
         if (filters.featured) filtered = filtered.filter((p) => p.featured);
         if (filters.bestseller) filtered = filtered.filter((p) => p.bestseller);
         if (filters.category) filtered = filtered.filter((p) => p.category === filters.category);
         if (filters.available !== undefined) filtered = filtered.filter((p) => p.available === filters.available);
         if (filters.is_bundle !== undefined) filtered = filtered.filter((p) => !!p.is_bundle === !!filters.is_bundle);
         setProducts(filtered);
-      } catch {
-        if (active) setProducts([]);
+      } catch (e) {
+        setProducts([]);
       } finally {
         if (active) setLoading(false);
       }
