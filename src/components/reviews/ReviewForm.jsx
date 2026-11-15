@@ -28,7 +28,7 @@ export default function ReviewForm({ productId = "", productName = "", orderNumb
         rating,
         review: form.review.trim(),
         order_number: ref,
-        });
+      }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not submit review");
       setDone(true);
