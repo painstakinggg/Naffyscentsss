@@ -72,6 +72,6 @@ export async function onRequestPost({ request, env }) {
     if (String(error?.message || "").toLowerCase().includes("unique")) {
       return json({ error: "An account already exists; setup is closed" }, 409);
     }
-    return json({ error: "Unable to complete administrator setup" }, 500);
+    return json({ error: "Unable to complete administrator setup", stage }, 500);
   }
 }
