@@ -42,7 +42,7 @@ export async function onRequestPost({ request, env }) {
   try {
     const id = crypto.randomUUID();
     stage = "hash-password";
-    const passwordHash = await hashPassword(password);
+    const passwordHash = await hashPassword(password, (hashStage) => { stage = hashStage; });
     stage = "insert-admin";
     const result = await env.DB.prepare(
       "INSERT INTO users (id, email, password_hash, full_name, role, email_verified) SELECT ?, ?, ?, ?, 'admin', 0 WHERE NOT EXISTS (SELECT 1 FROM users)"
