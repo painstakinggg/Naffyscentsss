@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiGet, apiPatch, apiDelete } from "@/lib/api";
 import { Check, X, Star, Trash2 } from "lucide-react";
 import moment from "moment";
 
@@ -20,8 +20,8 @@ export default function AdminReviews() {
   const load = async () => {
     setLoading(true);
     try {
-      const list = await base44.entities.Review.list("-created_date", 200);
-      setReviews(list || []);
+      const data = await apiGet("/admin/reviews");
+      setReviews(data.reviews || []);
     } catch (e) {}
     setLoading(false);
   };
@@ -29,23 +29,23 @@ export default function AdminReviews() {
   useEffect(() => { load(); }, []);
 
   const approve = async (r) => {
-    await base44.entities.Review.update(r.id, { status: "Approved", approved: true });
+    await apiPatch(`/admin/reviews/${r.id}`, { status: "Approved" });
     load();
   };
 
   const reject = async (r) => {
-    await base44.entities.Review.update(r.id, { status: "Rejected", approved: false, featured: false });
+    await apiPatch(`/admin/reviews/${r.id}`, { status: "Rejected" });
     load();
   };
 
   const toggleFeatured = async (r) => {
-    await base44.entities.Review.update(r.id, { featured: !r.featured });
+    await apiPatch(`/admin/reviews/${r.id}`, { featured: !r.featured });
     load();
   };
 
   const remove = async (r) => {
     if (!confirm("Delete this review?")) return;
-    await base44.entities.Review.delete(r.id);
+    await apiDelete(`/admin/reviews/${r.id}`);
     load();
   };
 
@@ -95,7 +95,7 @@ export default function AdminReviews() {
                       <div className="flex items-center gap-0.5">
                         {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={12} className={i <= r.rating ? "fill-gold text-gold" : "text-cream/20"} />)}
                       </div>
-                      <span className="text-xs text-cream/40">{moment(r.created_date).format("DD MMM YYYY")}</span>
+                      <span className="text-xs text-cream/40">{moment(r.created_at).format("DD MMM YYYY")}</span>
                     </div>
                     <p className="text-sm text-cream/60">{r.review}</p>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-cream/40">
