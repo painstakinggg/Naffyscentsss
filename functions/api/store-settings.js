@@ -52,3 +52,21 @@ export async function onRequestGet({ env }) {
     });
   }
 }
+
+import { requireAdmin, json } from "./_auth.js";
+const EDITABLE_SETTINGS = ["whatsapp_number","contact_email","instagram_handle","snapchat_handle","tiktok_handle","facebook_handle","store_address","maps_url","business_hours","pickup_hours","logistics_provider","delivery_fee_ilaro_min","delivery_fee_ilaro_max","delivery_info_note","delivery_fee_lagos","delivery_fee_nationwide","bank_name","account_name","account_number","payment_instructions","hero_headline","hero_subtext","promo_text","newsletter_text","brand_story_heading"];
+export async function onRequestPut({request,env}) {
+ const gate=await requireAdmin(request,env.DB); if(gate.response)return gate.response;
+ let body; try{body=await request.json()}catch{return json({error:"Invalid request"},400)}
+ const updates=EDITABLE_SETTINGS.filter(k=>Object.hasOwn(body,k));
+ if(!updates.length)return json({error:"No settings supplied"},400);
+ const current=await env.DB.prepare("SELECT id FROM store_settings ORDER BY updated_at DESC LIMIT 1").first();
+ const values=updates.map(k=>body[k]===null?"":body[k]);
+ if(current) await env.DB.prepare(`UPDATE store_settings SET ${updates.map(k=>k+"=?").join(",")},updated_at=CURRENT_TIMESTAMP WHERE id=?`).bind(...values,current.id).run();
+ else {
+  const id=crypto.randomUUID(), cols=["id",...updates];
+  await env.DB.prepare(`INSERT INTO store_settings(${cols.join(",")}) VALUES(${cols.map(()=>"?").join(",")})`).bind(id,...values).run();
+ }
+ const row=await env.DB.prepare("SELECT * FROM store_settings ORDER BY updated_at DESC LIMIT 1").first();
+ return json({settings:{...DEFAULT_SETTINGS,...row}});
+}
