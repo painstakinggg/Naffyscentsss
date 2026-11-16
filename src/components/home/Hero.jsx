@@ -5,8 +5,9 @@ import { useStore } from "@/lib/store-context";
 
 export default function Hero() {
   const { settings } = useStore();
-  const headline = settings?.hero_headline || "SCENT THAT SPEAKS BEFORE YOU DO.";
-  const subtext = settings?.hero_subtext || "Discover fragrances crafted to leave a lasting impression.";
+  // Preserve intentionally empty admin fields instead of restoring fallback copy.
+  const headline = settings?.hero_headline ?? "SCENT THAT SPEAKS BEFORE YOU DO.";
+  const subtext = settings?.hero_subtext ?? "Discover fragrances crafted to leave a lasting impression.";
 
   return (
     <section className="hero-section relative h-[100svh] min-h-[600px] w-full overflow-hidden bg-obsidian">
@@ -26,12 +27,16 @@ export default function Hero() {
         <p className="text-[11px] sm:text-xs tracking-luxe text-gold uppercase mb-6 animate-fade-up">
           Luxury Fragrance House · Nigeria
         </p>
-        <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-cream leading-[1.05] mb-6 text-balance animate-fade-up delay-200">
-          {headline}
-        </h1>
-        <p className="text-sm sm:text-base text-cream/70 max-w-xl mb-10 leading-relaxed animate-fade-up delay-400">
-          {subtext}
-        </p>
+        {headline && (
+          <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl text-cream leading-[1.05] mb-6 text-balance animate-fade-up delay-200">
+            {headline}
+          </h1>
+        )}
+        {subtext && (
+          <p className="text-sm sm:text-base text-cream/70 max-w-xl mb-10 leading-relaxed animate-fade-up delay-400">
+            {subtext}
+          </p>
+        )}
         <div className="flex flex-col sm:flex-row gap-4 animate-fade-up delay-500">
           <Link to="/shop" className="btn-gold px-10 py-4 inline-block text-center">
             Shop Collection
