@@ -213,13 +213,13 @@ export default function Checkout() {
     <main className="min-h-screen bg-white px-4 pb-20 pt-24 text-stone-800 sm:px-6 sm:pt-28">
       <div className="mx-auto max-w-xl">
         <form onSubmit={placeOrder} className="space-y-7">
-          <section className="space-y-3 pt-5">
-            <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between">
-              <span className="text-sm font-bold uppercase tracking-wider text-stone-900">Order Summary</span>
-              <span className="flex items-center gap-2 text-xs text-stone-500">
-                {summaryOpen ? "Hide details" : "Show details"}
-                <ChevronDown size={19} className={"transition-transform " + (summaryOpen ? "rotate-180" : "")} />
+          <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-7 sm:-mx-6 sm:px-7">
+            <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between gap-4 text-left">
+              <span className="flex min-w-0 items-center gap-3 text-[clamp(1.25rem,4.5vw,1.9rem)] font-normal leading-tight text-black">
+                Order summary
+                <ChevronDown size={25} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
               </span>
+              <strong className="shrink-0 text-[clamp(1.35rem,4.8vw,2rem)] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>
             </button>
             {summaryOpen ? (
               <div className="space-y-4 rounded-lg bg-[#faf9f6] p-4">
