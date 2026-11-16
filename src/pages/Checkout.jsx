@@ -27,6 +27,7 @@ export default function Checkout() {
   const isPickup = fulfilment === "pickup";
   const [coupon, setCoupon] = useState("");
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [finalSummaryOpen, setFinalSummaryOpen] = useState(false);
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [couponMsg, setCouponMsg] = useState("");
@@ -321,26 +322,56 @@ export default function Checkout() {
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
           </section>
 
-          <section className="space-y-4 border-t border-stone-200 pt-5">
-            <h2 className="text-[20px] font-semibold leading-tight text-stone-900">Order summary</h2>
-            <div className="space-y-3 rounded-lg border border-stone-200 bg-white p-4 sm:p-5">
-              {items.map((item) => (
-                <div key={"final-" + item.id + "-" + item.size_ml} className="flex items-center justify-between gap-4 border-b border-stone-100 pb-3 last:border-0 last:pb-0">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium text-stone-800">{item.name}</p>
-                    <p className="text-xs text-stone-500">Qty: {item.quantity}{item.is_bundle ? " · Bundle" : item.size_ml ? " · " + item.size_ml + "ml" : ""}</p>
+          <section className="border-t border-stone-200 pt-5">
+            <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
+              <button
+                type="button"
+                onClick={() => setFinalSummaryOpen((value) => !value)}
+                aria-expanded={finalSummaryOpen}
+                aria-label={finalSummaryOpen ? "Collapse full order details" : "Expand full order details"}
+                className="flex w-full items-center gap-3 p-4 text-left transition hover:bg-stone-50 sm:p-5"
+              >
+                {items[0]?.image ? (
+                  <img src={items[0].image} alt={items[0].name || "Product"} className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+                ) : (
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-stone-500">
+                    <ShoppingBag size={21} />
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold text-stone-900">Total</span>
+                  <span className="mt-0.5 block text-xs text-stone-500">
+                    {items.reduce((count, item) => count + Number(item.quantity || 0), 0)} items
+                  </span>
+                </span>
+                <span className="shrink-0 text-right">
+                  <span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-stone-500">NGN</span>
+                  <span className="block text-lg font-bold leading-tight tracking-tight text-stone-900">{formatNaira(total)}</span>
+                </span>
+                <ChevronDown size={20} className={"ml-1 shrink-0 text-stone-600 transition-transform " + (finalSummaryOpen ? "rotate-180" : "")} />
+              </button>
+              {finalSummaryOpen && (
+                <div className="space-y-3 border-t border-stone-200 bg-[#faf9f6] p-4 sm:p-5">
+                  {items.map((item) => (
+                    <div key={"final-" + item.id + "-" + item.size_ml} className="flex items-center gap-3 border-b border-stone-200 pb-3 last:border-0 last:pb-0">
+                      {item.image ? <img src={item.image} alt={item.name} className="h-12 w-12 shrink-0 rounded-md object-cover" /> : <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-stone-200 text-stone-500"><ShoppingBag size={18} /></span>}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-stone-800">{item.name}</p>
+                        <p className="text-xs text-stone-500">Qty: {item.quantity}{item.is_bundle ? " · Bundle" : item.size_ml ? " · " + item.size_ml + "ml" : ""}</p>
+                      </div>
+                      <span className="shrink-0 text-sm font-medium text-stone-900">{formatNaira(item.price * item.quantity)}</span>
+                    </div>
+                  ))}
+                  <div className="space-y-2 border-t border-stone-200 pt-3 text-sm">
+                    <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
+                    <SummaryRow label={isPickup ? "Pickup" : "Delivery fee"} value={isPickup ? "FREE" : formatNaira(deliveryFee)} />
+                    {discount > 0 && <SummaryRow label="Discount" value={"−" + formatNaira(discount)} green />}
+                    <div className="flex justify-between border-t border-stone-200 pt-3 font-bold text-stone-900">
+                      <span>Total</span><span className="text-[#762d38]">{formatNaira(total)}</span>
+                    </div>
                   </div>
-                  <span className="shrink-0 text-sm font-medium text-stone-900">{formatNaira(item.price * item.quantity)}</span>
                 </div>
-              ))}
-              <div className="space-y-2 border-t border-stone-200 pt-3 text-sm">
-                <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
-                <SummaryRow label={isPickup ? "Pickup" : "Delivery fee"} value={isPickup ? "FREE" : formatNaira(deliveryFee)} />
-                {discount > 0 && <SummaryRow label="Discount" value={"−" + formatNaira(discount)} green />}
-                <div className="flex justify-between border-t border-stone-200 pt-3 font-bold text-stone-900">
-                  <span>Total</span><span className="text-[#762d38]">{formatNaira(total)}</span>
-                </div>
-              </div>
+              )}
             </div>
           </section>
 
