@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -29,6 +30,7 @@ import { StoreProvider } from './lib/store-context';
 import { QuickViewProvider } from './lib/quickview-context';
 
 const AuthenticatedApp = () => {
+  const location = useLocation();
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
@@ -56,7 +58,16 @@ const AuthenticatedApp = () => {
     <StoreProvider>
       <CartProvider>
         <QuickViewProvider>
-          <Routes>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 10, scale: 0.995 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.998 }}
+              transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+              style={{ minHeight: '100%' }}
+            >
+          <Routes location={location}>
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/shop" element={<Shop />} />
@@ -83,6 +94,8 @@ const AuthenticatedApp = () => {
             <Route path="/admin-setup" element={<AdminSetup />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
+            </motion.div>
+          </AnimatePresence>
         </QuickViewProvider>
       </CartProvider>
     </StoreProvider>
