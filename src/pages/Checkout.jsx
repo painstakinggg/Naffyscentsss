@@ -300,6 +300,6 @@ function SectionHeading({ icon, title, subtitle }) {
   return <div className="mb-5 flex items-start gap-3"><span className="rounded-md bg-[#762d38]/[0.07] p-2 text-[#762d38]">{icon}</span><div><h2 className="font-heading text-xl text-stone-900">{title}</h2><p className="mt-1 text-xs text-stone-500">{subtitle}</p></div></div>;
 }
 
-function SummaryRow({ label, value, strong, green }) {
+function SummaryRow({ label, value, strong = false, green = false }) {
   return <div className="mb-2 flex items-start justify-between gap-4 text-xs"><span className="text-stone-500">{label}</span><span className={`text-right ${strong ? "font-semibold text-stone-900" : green ? "font-medium text-emerald-700" : "text-stone-700"}`}>{value}</span></div>;
 }

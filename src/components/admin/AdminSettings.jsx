@@ -149,7 +149,7 @@ export default function AdminSettings() {
   );
 }
 
-function Field({ label, value, onChange, type = "text", required, className = "" }) {
+function Field({ label, value, onChange, type = "text", required = false, className = "" }) {
   return (
     <div className={`space-y-1.5 ${className}`}>
       <label className="text-[10px] tracking-luxe-sm text-gold uppercase">{label}</label>

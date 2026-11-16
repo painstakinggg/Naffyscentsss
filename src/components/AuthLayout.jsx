@@ -3,6 +3,7 @@ import { Image } from "@/components/ui/image";
 
 const LOGO_URL = "/favicon.svg";
 
+/** @param {{ title?: React.ReactNode, subtitle?: React.ReactNode, footer?: React.ReactNode, children?: React.ReactNode, icon?: React.ElementType }} props */
 export default function AuthLayout({ title, subtitle, footer, children }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">

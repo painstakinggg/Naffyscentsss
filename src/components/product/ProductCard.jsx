@@ -6,6 +6,7 @@ import { useQuickView } from "@/lib/quickview-context";
 import { formatNaira } from "@/lib/images";
 import StarRating from "./StarRating";
 
+/** @param {{ product: any, badge?: string }} props */
 export default function ProductCard({ product, badge }) {
   const { open: openQuickView } = useQuickView();
   const { addToCart, toggleWishlist, isWishlisted } = useCart();

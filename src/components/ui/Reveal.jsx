@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 
+/** @param {{ children?: React.ReactNode, className?: string, delay?: number, as?: React.ElementType }} props */
 export default function Reveal({ children, className = "", delay = 0, as: Tag = "div" }) {
   const ref = useRef(null);
+  const RevealTag = /** @type {any} */ (Tag);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

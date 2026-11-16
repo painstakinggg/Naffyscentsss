@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import { Check, Star } from "lucide-react";
 
+/** @param {{ productId?: string, productName?: string, orderNumber?: string, onSubmitted?: () => void }} props */
 export default function ReviewForm({ productId = "", productName = "", orderNumber = "", onSubmitted }) {
   const [form, setForm] = useState({ customer_name: "", email: "", review: "", order_number: orderNumber });
   const [rating, setRating] = useState(0);

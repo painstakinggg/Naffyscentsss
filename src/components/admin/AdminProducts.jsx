@@ -276,7 +276,7 @@ export default function AdminProducts() {
   );
 }
 
-function Input({ label, value, onChange, type = "text", required, className = "" }) {
+function Input({ label, value, onChange, type = "text", required = false, className = "" }) {
   return (
     <div className={`space-y-1.5 ${className}`}>
       <label className="text-[10px] tracking-luxe-sm text-gold uppercase">{label}</label>

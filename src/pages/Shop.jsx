@@ -82,7 +82,7 @@ export default function Shop() {
       if (sort === "price-low") r.sort((a, b) => a.price - b.price);
       else if (sort === "price-high") r.sort((a, b) => b.price - a.price);
       else if (sort === "popular") r.sort((a, b) => (b.review_count || 0) - (a.review_count || 0));
-      else if (sort === "newest") r.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      else if (sort === "newest") r.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     }
     return r;
   }, [allProducts, search, category, family, gender, availability, maxPrice, type, sort, bestseller, featured, collection]);
