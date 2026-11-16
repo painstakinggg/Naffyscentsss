@@ -108,7 +108,7 @@ export default function Checkout() {
         body: JSON.stringify({
           ...form,
           customer_name: [form.first_name, form.last_name].filter(Boolean).join(" "),
-          customer_email: isPickup ? "" : form.customer_email,
+          customer_email: form.customer_email,
           address: isPickup ? "" : [form.address, form.apartment].filter(Boolean).join(", "),
           apartment: isPickup ? "" : form.apartment,
           postal_code: isPickup ? "" : form.postal_code,
@@ -135,6 +135,7 @@ export default function Checkout() {
       setOrder(result.order);
       clearCart();
       window.scrollTo(0, 0);
+      await startPaystack(result.order.id);
     } catch {
       alert("Could not place your order. Please check your details and try again.");
     } finally {
@@ -264,12 +265,10 @@ export default function Checkout() {
                 <label className={labelClass}>Phone number *</label>
                 <input className={inputClass} type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g. 080…" required />
               </div>
-              {!isPickup && (
-                <div>
-                  <label className={labelClass}>Email address *</label>
-                  <input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" required />
-                </div>
-              )}
+              <div>
+                <label className={labelClass}>Email address *</label>
+                <input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" required />
+              </div>
             </div>
           </section>
 
