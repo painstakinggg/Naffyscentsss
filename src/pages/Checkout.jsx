@@ -14,7 +14,7 @@ const NIGERIAN_STATES = [
   "Taraba", "Yobe", "Zamfara",
 ];
 
-const inputClass = "w-full rounded-md border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 outline-none transition focus:border-[#762d38] focus:ring-2 focus:ring-[#762d38]/10 placeholder:text-stone-400";
+const inputClass = "w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 outline-none transition focus:border-[#762d38] focus:ring-2 focus:ring-[#762d38]/10 placeholder:text-stone-400";
 const labelClass = "mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-stone-600";
 
 export default function Checkout() {
@@ -195,7 +195,7 @@ export default function Checkout() {
                   </div>
                 ))}
                 <div className="flex gap-2">
-                  <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
+                  <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-2xl border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
                   <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] transition hover:bg-[#762d38]/5">Apply</button>
                 </div>
                 {couponMsg && <p className={"text-xs " + (discount > 0 ? "text-emerald-700" : "text-red-600")}>{couponMsg}</p>}
