@@ -84,7 +84,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed z-50 transition-all duration-500 ${location.pathname === "/" && !scrolled ? "opacity-0 pointer-events-none -translate-y-8" : "opacity-100 translate-y-0"} ${
+        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed z-50 transition-all duration-500 ${
           headerSolid
             ? "top-3 left-4 right-4 h-20 rounded-[40px] shadow-lg shadow-black/15 glass-strong py-0"
             : "top-0 left-0 right-0 bg-transparent py-5"
