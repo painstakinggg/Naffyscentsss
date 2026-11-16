@@ -35,6 +35,8 @@ export default function Checkout() {
   const [paidStatus, setPaidStatus] = useState("idle");
   const [paymentReference, setPaymentReference] = useState("");
   const [paymentProof, setPaymentProof] = useState(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
 
   const ilaroMin = settings?.delivery_fee_ilaro_min ?? 1000;
   const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
@@ -74,6 +76,25 @@ export default function Checkout() {
       setCouponMsg("Coupon applied successfully");
     } catch {
       setCouponMsg("We could not verify that coupon");
+    }
+  };
+
+  const startPaystack = async (orderId) => {
+    setPaymentLoading(true);
+    setPaymentError("");
+    try {
+      const response = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ order_id: orderId }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.authorization_url) throw new Error(data.error || "Could not open Paystack checkout.");
+      window.location.assign(data.authorization_url);
+    } catch (error) {
+      setPaymentError(error.message || "Could not start payment. Please try again.");
+    } finally {
+      setPaymentLoading(false);
     }
   };
 
@@ -166,38 +187,16 @@ export default function Checkout() {
                 <SummaryRow label="Delivery estimate" value={Number(order.delivery_fee_min) === Number(order.delivery_fee_max) ? formatNaira(order.delivery_fee_min) : `${formatNaira(order.delivery_fee_min)} – ${formatNaira(order.delivery_fee_max)}`} />
               )}
             </div>
-            {paidStatus === "submitted" ? (
-              <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 p-5 text-left">
-                <p className="mb-1 text-sm font-semibold text-emerald-800">Payment confirmation received</p>
-                <p className="text-xs leading-5 text-emerald-700">Your order will be processed after our team verifies the payment.</p>
-              </div>
-            ) : (
-              <div className="rounded-xl border border-stone-200 p-5 text-left">
-                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#762d38]">Bank transfer payment</p>
-                <p className="mb-1 text-sm text-stone-600">Transfer the exact order amount:</p>
-                <p className="mb-4 text-2xl font-semibold text-stone-900">{formatNaira(order.total)}</p>
-                {settings?.bank_name ? (
-                  <div className="mb-4 space-y-2 rounded-lg bg-[#faf9f6] p-4 text-sm">
-                    <SummaryRow label="Bank" value={settings.bank_name} />
-                    {settings?.account_name && <SummaryRow label="Account name" value={settings.account_name} />}
-                    {settings?.account_number && <SummaryRow label="Account number" value={settings.account_number} />}
-                  </div>
-                ) : (
-                  <p className="mb-4 text-sm text-stone-500">Our team will share the bank details with you shortly.</p>
-                )}
-                {settings?.payment_instructions && <p className="mb-4 text-xs leading-5 text-stone-500">{settings.payment_instructions}</p>}
-                <a href={waUrl} target="_blank" rel="noopener noreferrer" className="mb-3 flex w-full items-center justify-center gap-2 rounded-md border border-[#762d38] px-4 py-3 text-sm font-semibold text-[#762d38] transition hover:bg-[#762d38]/5">
-                  <MessageCircle size={16} /> Send payment proof on WhatsApp
-                </a>
-                <div className="mb-3"><label className={labelClass}>Transaction reference *</label><input value={paymentReference} onChange={(e) => setPaymentReference(e.target.value)} placeholder="Bank transfer reference" className={inputClass} required /></div>
-                <div className="mb-4"><label className={labelClass}>Payment screenshot (optional · JPG/PNG/WebP · max 5 MB)</label><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => { const file=e.target.files?.[0]; if (!file) return; if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size>5*1024*1024) { setPaidStatus("error"); return; } setPaymentProof(file); setPaidStatus("idle"); }} className="w-full text-xs text-stone-600" />{paymentProof && <p className="mt-1 text-xs text-stone-500">{paymentProof.name} <button type="button" onClick={() => setPaymentProof(null)} className="ml-2 text-[#762d38] underline">Remove</button></p>}</div>
-                <button onClick={handleConfirmPayment} disabled={paidStatus === "submitting"} className="w-full rounded-md bg-[#762d38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#60232d] disabled:opacity-50">
-                  {paidStatus === "submitting" ? "Submitting…" : "I've made the transfer"}
-                </button>
-                {paidStatus === "error" && <p className="mt-2 text-xs text-red-600">Please check your transaction reference and screenshot (JPG, PNG or WebP up to 5 MB), then try again.</p>}
-                <p className="mt-3 text-xs leading-5 text-stone-500">Your payment is not marked as complete until our team verifies it.</p>
-              </div>
-            )}
+            <div className="rounded-xl border border-stone-200 p-5 text-left">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#762d38]">Pay securely with Paystack</p>
+              <p className="mb-4 text-sm leading-6 text-stone-600">Complete your payment using Paystack's secure checkout. Your order will only be marked as paid after the payment is verified by our server.</p>
+              <p className="mb-4 text-2xl font-semibold text-stone-900">{formatNaira(order.total)}</p>
+              {paymentError && <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{paymentError}</p>}
+              <button type="button" onClick={() => startPaystack(order.id)} disabled={paymentLoading} className="w-full rounded-md bg-[#762d38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#60232d] disabled:opacity-50">
+                {paymentLoading ? "Connecting to Paystack…" : "Pay with Paystack"}
+              </button>
+              <p className="mt-3 text-xs leading-5 text-stone-500">Test mode is active. No real money will be collected while test keys are configured.</p>
+            </div>
             <p className="mt-6 text-xs text-stone-500">We’ll contact you on {order.phone} {order.fulfilment_method === "Pickup" ? "when your order is ready for collection." : "to confirm delivery and payment."}</p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
               <Link to="/shop" className="rounded-md bg-[#762d38] px-7 py-3 text-sm font-semibold text-white">Continue shopping</Link>
@@ -267,8 +266,8 @@ export default function Checkout() {
               </div>
               {!isPickup && (
                 <div>
-                  <label className={labelClass}>Email address <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
-                  <input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" />
+                  <label className={labelClass}>Email address *</label>
+                  <input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" required />
                 </div>
               )}
             </div>
