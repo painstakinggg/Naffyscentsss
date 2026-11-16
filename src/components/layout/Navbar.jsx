@@ -87,7 +87,7 @@ export default function Navbar() {
         className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed z-50 transition-all duration-500 ${
           headerSolid
             ? "top-3 left-4 right-4 h-20 rounded-[40px] shadow-lg shadow-black/15 glass-strong py-0"
-            : "top-0 left-0 right-0 bg-transparent py-5"
+            : "top-0 left-0 right-0 bg-transparent py-5 border-b border-cream/25"
         }`}
       >
         <div className={`max-w-[1400px] mx-auto px-5 sm:px-8 flex items-center justify-between ${headerSolid ? "h-full" : ""}`}>
