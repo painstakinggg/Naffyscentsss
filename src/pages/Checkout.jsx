@@ -288,24 +288,24 @@ export default function Checkout() {
 
           <section className="space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Delivery</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <button type="button" onClick={() => setFulfilment("delivery")} className={"flex items-center justify-between gap-2 rounded-lg border p-3 text-left transition sm:p-4 " + (!isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]" : "border-stone-200 hover:border-stone-400")}>
-                <span className="flex items-center gap-2 text-sm font-semibold text-stone-800"><Truck size={19} className="shrink-0 text-[#762d38]" />Home delivery</span>
-                <span className={"h-4 w-4 shrink-0 rounded-full border " + (!isPickup ? "border-4 border-[#762d38]" : "border-stone-300")} />
+            <div className="grid grid-cols-2 gap-1 rounded-[24px] bg-stone-100 p-1.5">
+              <button type="button" onClick={() => setFulfilment("delivery")} aria-pressed={!isPickup} className={"flex min-h-[76px] items-center justify-center gap-2 rounded-[20px] px-3 py-4 text-base font-semibold transition " + (!isPickup ? "bg-white text-stone-950 shadow-sm ring-1 ring-stone-200" : "text-stone-800 hover:bg-white/60")}>
+                <Truck size={21} className="shrink-0 text-stone-950" />Ship
               </button>
-              <button type="button" onClick={() => setFulfilment("pickup")} className={"flex items-center justify-between gap-2 rounded-lg border p-3 text-left transition sm:p-4 " + (isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]" : "border-stone-200 hover:border-stone-400")}>
-                <span className="flex items-center gap-2 text-sm font-semibold text-stone-800"><ShoppingBag size={19} className="shrink-0 text-[#762d38]" />Store pickup</span>
-                <span className={"h-4 w-4 shrink-0 rounded-full border " + (isPickup ? "border-4 border-[#762d38]" : "border-stone-300")} />
+              <button type="button" onClick={() => setFulfilment("pickup")} aria-pressed={isPickup} className={"flex min-h-[76px] items-center justify-center gap-2 rounded-[20px] px-3 py-4 text-base font-semibold transition " + (isPickup ? "bg-white text-stone-950 shadow-sm ring-1 ring-stone-200" : "text-stone-800 hover:bg-white/60")}>
+                <MapPin size={21} className="shrink-0 text-stone-950" />Pickup
               </button>
             </div>
 
             {isPickup ? (
-              <div className="space-y-3 rounded-lg border border-stone-200 p-4 sm:p-5">
-                <div className="flex items-center gap-2 text-sm font-semibold text-stone-900"><MapPin size={17} className="text-[#762d38]" />Pickup address</div>
-                <p className="text-sm leading-relaxed text-stone-600">{settings?.store_address || "Ilaro, Ogun State"}</p>
-                <div className="border-t border-stone-200 pt-3">
-                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-600">Pickup hours</span>
-                  <p className="text-sm text-stone-700">{pickupHours}</p>
+              <div className="rounded-[24px] border border-stone-200 bg-white px-5 py-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-base font-semibold text-stone-950">Naffy Scents Store</p>
+                    <p className="mt-1 text-sm leading-relaxed text-stone-800">{settings?.store_address || "Ilaro, Ogun State"}</p>
+                    <p className="mt-2 flex items-center gap-2 text-sm text-stone-600"><span aria-hidden="true">◷</span>Usually ready in 1 hour</p>
+                  </div>
+                  <span className="shrink-0 text-base font-semibold text-stone-950">FREE</span>
                 </div>
               </div>
             ) : (
