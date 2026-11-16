@@ -13,7 +13,7 @@ export default function Hero() {
       {/* Background image */}
       <div className="absolute inset-0">
         <img
-          src={IMAGES.hero}
+          src={settings?.hero_image_url || IMAGES.hero}
           alt="Naffy Scents luxury fragrance"
           className="w-full h-full object-cover object-center"
         />
