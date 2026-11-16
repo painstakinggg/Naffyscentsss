@@ -344,9 +344,9 @@ export default function Checkout() {
                     {items.reduce((count, item) => count + Number(item.quantity || 0), 0)} items
                   </span>
                 </span>
-                <span className="shrink-0 text-right">
-                  <span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-stone-500">NGN</span>
-                  <span className="block text-lg font-bold leading-tight tracking-tight text-stone-900">{formatNaira(total)}</span>
+                <span className="flex shrink-0 items-baseline gap-1.5 whitespace-nowrap text-right">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-stone-500">NGN</span>
+                  <span className="text-lg font-bold leading-tight tracking-tight text-stone-900">{formatNaira(total)}</span>
                 </span>
                 <ChevronDown size={20} className={"ml-1 shrink-0 text-stone-600 transition-transform " + (finalSummaryOpen ? "rotate-180" : "")} />
               </button>
