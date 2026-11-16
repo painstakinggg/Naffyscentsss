@@ -95,6 +95,17 @@ export default function Shop() {
   const clearAll = () => setParams(new URLSearchParams());
   const activeFilters = [category, family, gender, availability, maxPrice, search, type, bestseller, featured, collection].filter(Boolean).length;
   const pageTitle = COLLECTION_TITLES[collection] || "Shop All Fragrances";
+  const recommended = useMemo(() => [...allProducts]
+    .filter((product) => product.available)
+    .sort((a, b) => Number(b.bestseller) - Number(a.bestseller) || Number(b.featured) - Number(a.featured) || (b.review_count || 0) - (a.review_count || 0))
+    .slice(0, 4), [allProducts]);
+
+  const shopFaqs = [
+    { q: "How do I choose the right fragrance?", a: "Explore our fragrance families and product descriptions, or contact our team on WhatsApp for a personal recommendation." },
+    { q: "Are the fragrances available for immediate order?", a: "Availability is shown on each product. Items marked Sold Out cannot be added to your bag." },
+    { q: "How much does delivery cost?", a: "Delivery fees are calculated at checkout based on your delivery location. Store pickup is available at no delivery charge." },
+    { q: "Can I order more than one fragrance?", a: "Yes. Add as many available fragrances as you like to your shopping bag and adjust quantities before checkout." },
+  ];
 
   return (
     <div className="pt-28 pb-20 min-h-screen">
@@ -139,6 +150,39 @@ export default function Shop() {
           </div>
         </div>
       </div>
+
+      <section className="max-w-[1400px] mx-auto px-5 sm:px-8 mt-20 sm:mt-24">
+        <div className="text-center mb-10">
+          <p className="text-[11px] tracking-luxe text-gold uppercase mb-3">Discover More</p>
+          <h2 className="font-heading text-3xl sm:text-4xl text-cream">You may also like</h2>
+          <p className="text-sm text-cream/45 mt-3">A few more scents worth discovering.</p>
+        </div>
+        {recommended.length > 0 ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {recommended.map((product) => <ProductCard key={product.id} product={product} badge={product.bestseller ? "Best Seller" : null} />)}
+          </div>
+        ) : (
+          <p className="text-center text-sm text-cream/45">More fragrances are coming soon.</p>
+        )}
+      </section>
+
+      <section className="max-w-3xl mx-auto px-5 sm:px-8 mt-20 sm:mt-24">
+        <div className="text-center mb-10">
+          <p className="text-[11px] tracking-luxe text-gold uppercase mb-3">A little help</p>
+          <h2 className="font-heading text-3xl sm:text-4xl text-cream">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-3">
+          {shopFaqs.map((item, index) => (
+            <details key={item.q} className="glass rounded-xl group">
+              <summary className="cursor-pointer p-5 flex items-center justify-between gap-4 list-none">
+                <span className="font-heading text-base sm:text-lg text-cream">{item.q}</span>
+                <span className="text-gold text-xl transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <div className="px-5 pb-5 text-sm text-cream/55 leading-relaxed">{item.a}</div>
+            </details>
+          ))}
+        </div>
+      </section>
 
       {showFilters && (
         <div className="fixed inset-0 z-[70] lg:hidden">
