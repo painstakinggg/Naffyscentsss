@@ -38,6 +38,7 @@ export default function Checkout() {
   const [paymentProof, setPaymentProof] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
+  const [showMorePaymentBrands, setShowMorePaymentBrands] = useState(false);
 
   const ilaroMin = settings?.delivery_fee_ilaro_min ?? 1000;
   const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
@@ -317,6 +318,28 @@ export default function Checkout() {
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#762d38]/[0.08] text-[#762d38]"><CreditCard size={17} /></span>
                 Paystack
               </div>
+              <div className="flex flex-wrap items-center gap-2" aria-label="Payment brand logos">
+                <PaymentBrandLogo name="Mastercard" src="https://cdn.simpleicons.org/mastercard/EB001B" />
+                <PaymentBrandLogo name="Visa" src="https://cdn.simpleicons.org/visa/1A1F71" />
+                <PaymentBrandLogo name="MTN MoMo" src="https://cdn.simpleicons.org/mtn/FFCC00" />
+                <button
+                  type="button"
+                  onClick={() => setShowMorePaymentBrands((value) => !value)}
+                  aria-expanded={showMorePaymentBrands}
+                  aria-label={showMorePaymentBrands ? "Hide additional payment brand logos" : "Show four additional payment brand logos"}
+                  className="flex h-10 min-w-10 items-center justify-center rounded-lg border border-stone-200 bg-white px-2.5 text-xs font-bold text-stone-700 transition hover:border-stone-400"
+                >
+                  {showMorePaymentBrands ? "−4" : "+4"}
+                </button>
+              </div>
+              {showMorePaymentBrands && (
+                <div className="grid grid-cols-2 gap-2 pt-1" aria-label="Additional payment brand logos">
+                  <PaymentBrandLogo name="American Express" src="https://cdn.simpleicons.org/americanexpress/2E77BC" />
+                  <PaymentBrandLogo name="PesaPay" src="https://pesapesa.cash/favicon.ico" />
+                  <PaymentBrandLogo name="AirtelTigo Money" src="https://cdn.simpleicons.org/airteltigo/EA1D25" />
+                  <PaymentBrandLogo name="Ozow" src="https://cdn.simpleicons.org/ozow/00E587" />
+                </div>
+              )}
               <p className="text-sm leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
             </div>
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
@@ -402,6 +425,15 @@ export default function Checkout() {
 
 function SectionHeading({ icon, title, subtitle }) {
   return <div className="mb-5 flex items-start gap-3"><span className="rounded-md bg-[#762d38]/[0.07] p-2 text-[#762d38]">{icon}</span><div><h2 className="font-heading text-xl text-stone-900">{title}</h2><p className="mt-1 text-xs text-stone-500">{subtitle}</p></div></div>;
+}
+
+
+function PaymentBrandLogo({ name, src }) {
+  return (
+    <span className="flex h-10 min-w-0 items-center justify-center rounded-lg border border-stone-200 bg-white px-3 py-2">
+      <img src={src} alt={name} title={name} loading="lazy" className="h-6 max-w-[104px] object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+    </span>
+  );
 }
 
 function SummaryRow({ label, value, strong = false, green = false }) {
