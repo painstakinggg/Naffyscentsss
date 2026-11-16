@@ -175,9 +175,9 @@ export default function Checkout() {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[#762d38]/10 text-[#762d38]">
               <Check size={30} strokeWidth={1.7} />
             </div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#762d38]">Order received</p>
-            <h1 className="mb-3 font-heading text-3xl text-stone-900">Thank you, {order.customer_name.split(" ")[0]}.</h1>
-            <p className="text-sm text-stone-600">Your order has been created successfully.</p>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#762d38]">Payment required</p>
+            <h1 className="mb-3 font-heading text-3xl text-stone-900">Complete your payment</h1>
+            <p className="text-sm text-stone-600">Your order is awaiting payment. You will receive a successful transaction confirmation only after Paystack verifies the payment.</p>
             <p className="mt-2 text-sm text-stone-500">Order reference: <strong className="text-[#762d38]">#{orderRef}</strong></p>
             <div className="my-7 rounded-xl bg-[#faf9f6] p-5 text-left">
               <SummaryRow label="Fulfilment" value={order.fulfilment_method === "Pickup" ? "Store pickup" : "Logistics delivery"} />
@@ -194,11 +194,11 @@ export default function Checkout() {
               <p className="mb-4 text-2xl font-semibold text-stone-900">{formatNaira(order.total)}</p>
               {paymentError && <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">{paymentError}</p>}
               <button type="button" onClick={() => startPaystack(order.id)} disabled={paymentLoading} className="w-full rounded-md bg-[#762d38] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#60232d] disabled:opacity-50">
-                {paymentLoading ? "Connecting to Paystack…" : "Pay with Paystack"}
+                {paymentLoading ? "Connecting to Paystack…" : "Pay Now"}
               </button>
               <p className="mt-3 text-xs leading-5 text-stone-500">Test mode is active. No real money will be collected while test keys are configured.</p>
             </div>
-            <p className="mt-6 text-xs text-stone-500">We’ll contact you on {order.phone} {order.fulfilment_method === "Pickup" ? "when your order is ready for collection." : "to confirm delivery and payment."}</p>
+            <p className="mt-6 text-xs text-stone-500">Your order will be processed after Paystack confirms successful payment. We’ll contact you on {order.phone} with fulfilment updates.</p>
             <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
               <Link to="/shop" className="rounded-md bg-[#762d38] px-7 py-3 text-sm font-semibold text-white">Continue shopping</Link>
               <Link to={`/leave-review?order=${orderRef}`} className="rounded-md border border-stone-300 px-7 py-3 text-sm font-semibold text-stone-700">Leave a review</Link>
@@ -362,9 +362,9 @@ export default function Checkout() {
           </section>
 
           <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-md bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
-            <Lock size={15} />{placing ? "Placing your order…" : "Place order"}
+            <Lock size={15} />{placing ? "Redirecting to Paystack…" : "Pay Now"}
           </button>
-          <p className="flex items-center justify-center gap-2 text-[11px] text-stone-500"><Lock size={13} />Your order will remain awaiting payment until the transfer is verified.</p>
+          <p className="flex items-center justify-center gap-2 text-[11px] text-stone-500"><Lock size={13} />You’ll be redirected to Paystack to complete your payment. Your order is confirmed only after payment verification.</p>
           <p className="text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={"https://wa.me/" + (settings?.whatsapp_number || "2348103173658")} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
         </form>
       </div>
