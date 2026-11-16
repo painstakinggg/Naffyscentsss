@@ -30,17 +30,30 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const syncScrollState = () => setScrolled(window.scrollY > 30);
+    const syncScrollState = () => {
+      if (location.pathname !== "/") {
+        setScrolled(true);
+        return;
+      }
 
-    // Read the current position on mount and route changes, not only on
-    // the next user-generated scroll event.
+      const hero = document.querySelector(".hero-section");
+      const heroBottom = hero
+        ? hero.getBoundingClientRect().bottom
+        : window.innerHeight;
+      setScrolled(heroBottom <= 0);
+    };
+
+    // On the homepage, reveal the floating header only after the hero has
+    // completely left the viewport. Inner pages keep their solid header.
     syncScrollState();
     const frame = window.requestAnimationFrame(syncScrollState);
     window.addEventListener("scroll", syncScrollState, { passive: true });
+    window.addEventListener("resize", syncScrollState);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", syncScrollState);
+      window.removeEventListener("resize", syncScrollState);
     };
   }, [location.pathname, location.hash]);
 
@@ -71,7 +84,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed z-50 transition-all duration-500 ${
+        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed z-50 transition-all duration-500 ${location.pathname === "/" && !scrolled ? "opacity-0 pointer-events-none -translate-y-8" : "opacity-100 translate-y-0"} ${
           headerSolid
             ? "top-3 left-4 right-4 h-20 rounded-[40px] shadow-lg shadow-black/15 glass-strong py-0"
             : "top-0 left-0 right-0 bg-transparent py-5"
