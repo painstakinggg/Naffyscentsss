@@ -21,7 +21,7 @@ export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
   const { settings } = useStore();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ first_name: "", last_name: "", customer_email: "", phone: "", address: "", apartment: "", postal_code: "", customer_instructions: "", city: "", state: "Ogun" });
+  const [form, setForm] = useState({ phone: "", address: "", apartment: "", postal_code: "", customer_instructions: "", city: "", state: "Ogun" });
   const [deliveryZone, setDeliveryZone] = useState("ilaro");
   const [fulfilment, setFulfilment] = useState("delivery");
   const isPickup = fulfilment === "pickup";
@@ -74,8 +74,8 @@ export default function Checkout() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           ...form,
-          customer_name: [form.first_name, form.last_name].filter(Boolean).join(" "),
-          customer_email: isPickup ? "" : form.customer_email,
+          customer_name: "Customer",
+          customer_email: "",
           address: isPickup ? "" : [form.address, form.apartment].filter(Boolean).join(", "),
           apartment: isPickup ? "" : form.apartment,
           postal_code: isPickup ? "" : form.postal_code,
@@ -253,25 +253,9 @@ export default function Checkout() {
 
           <section className="space-y-3">
             <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Contact</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className={labelClass}>First name <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
-                <input className={inputClass} autoComplete="given-name" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="First name" />
-              </div>
-              <div>
-                <label className={labelClass}>Last name *</label>
-                <input className={inputClass} autoComplete="family-name" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} placeholder="Last name" required />
-              </div>
-              <div>
-                <label className={labelClass}>Phone number *</label>
-                <input className={inputClass} type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g. 080…" required />
-              </div>
-              {!isPickup && (
-                <div>
-                  <label className={labelClass}>Email address <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
-                  <input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" />
-                </div>
-              )}
+            <div>
+              <label className={labelClass}>Phone number *</label>
+              <input className={inputClass} type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g. 080…" required />
             </div>
           </section>
 
