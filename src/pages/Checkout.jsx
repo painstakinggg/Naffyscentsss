@@ -354,9 +354,9 @@ export default function Checkout() {
             <div className="space-y-3 rounded-lg border border-stone-200 p-4 sm:p-5">
               <div className="flex items-center gap-3 text-sm font-semibold text-stone-900">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#762d38]/[0.08] text-[#762d38]"><CreditCard size={17} /></span>
-                Bank Transfer
+                Paystack
               </div>
-              <p className="text-sm leading-relaxed text-stone-600">Your payment instructions and the exact order amount will be displayed after your order is placed. Payment is verified by our team before processing.</p>
+              <p className="text-sm leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
             </div>
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
           </section>
