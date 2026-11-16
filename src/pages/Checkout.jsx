@@ -236,12 +236,10 @@ export default function Checkout() {
                 <div className="space-y-2 border-t border-stone-200 pt-3 text-sm">
                   <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
                   {discount > 0 && <SummaryRow label="Discount" value={"−" + formatNaira(discount)} green />}
-                  <SummaryRow label={isPickup ? "Pickup fee" : "Delivery estimate"} value={isPickup ? "Free" : deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : formatNaira(ilaroMin) + " – " + formatNaira(ilaroMax)} />
                   <div className="flex justify-between border-t border-stone-200 pt-3 font-bold text-stone-900">
                     <span>Total</span><span className="text-[#762d38]">{formatNaira(total)}</span>
                   </div>
                 </div>
-                {!isPickup && <p className="text-[11px] leading-5 text-stone-500">Final delivery fee is confirmed with you. It is not included in the order total above.</p>}
               </div>
             ) : (
               <div className="flex justify-between rounded-lg bg-[#faf9f6] px-4 py-3 text-sm">
