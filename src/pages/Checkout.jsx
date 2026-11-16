@@ -212,13 +212,6 @@ export default function Checkout() {
   return (
     <main className="min-h-screen bg-white px-4 pb-20 pt-24 text-stone-800 sm:px-6 sm:pt-28">
       <div className="mx-auto max-w-xl">
-        <header className="relative mb-7 flex items-center justify-center border-b border-stone-200 pb-5">
-          <button type="button" onClick={() => navigate("/cart")} aria-label="Back to shopping bag" className="absolute left-0 rounded-full p-2 transition hover:bg-stone-100">
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-lg font-bold tracking-tight text-stone-900">Secure Checkout</h1>
-        </header>
-
         <form onSubmit={placeOrder} className="space-y-7">
           <section className="space-y-3 pt-5">
             <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between">
