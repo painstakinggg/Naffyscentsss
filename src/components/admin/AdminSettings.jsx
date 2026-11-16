@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/api";
 import { useStore } from "@/lib/store-context";
-import { Save, Plus, Trash2 } from "lucide-react";
+import { Save, Plus, Trash2, Upload } from "lucide-react";
+import { IMAGES } from "@/lib/images";
 
 export default function AdminSettings() {
   const { settings, reload } = useStore();
   const [form, setForm] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
   const [promotions, setPromotions] = useState([]);
   const [newPromo, setNewPromo] = useState({ title: "", code: "", discount_type: "percentage", discount_value: 10, active: true });
 
@@ -35,6 +37,29 @@ export default function AdminSettings() {
       alert("Could not save settings");
     }
     setSaving(false);
+  };
+
+  const uploadHero = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const data = new FormData();
+    data.append("file", file);
+    setUploadingHero(true);
+    try {
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        credentials: "include",
+        body: data,
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Could not upload hero image");
+      setForm((current) => ({ ...current, hero_image_url: result.file_url }));
+    } catch (err) {
+      alert(err.message || "Could not upload hero image");
+    } finally {
+      setUploadingHero(false);
+      e.target.value = "";
+    }
   };
 
   const addPromo = async (e) => {
@@ -102,6 +127,37 @@ export default function AdminSettings() {
             <p className="sm:col-span-2 text-[10px] tracking-luxe-sm text-gold uppercase pt-4">Homepage Content</p>
             <Field label="Hero Headline" value={form.hero_headline} onChange={(v) => setForm({ ...form, hero_headline: v })} className="sm:col-span-2" />
             <Field label="Hero Subtext" value={form.hero_subtext} onChange={(v) => setForm({ ...form, hero_subtext: v })} className="sm:col-span-2" />
+            <div className="sm:col-span-2 space-y-3">
+              <label className="text-[10px] tracking-luxe-sm text-gold uppercase">Homepage Hero Background Image</label>
+              <div className="overflow-hidden rounded-lg border border-gold/25 bg-obsidian">
+                <img
+                  src={form.hero_image_url || IMAGES.hero}
+                  alt="Homepage hero background preview"
+                  className="w-full h-40 object-cover"
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="btn-outline-gold px-5 py-2.5 inline-flex items-center gap-2 cursor-pointer">
+                  <Upload size={15} /> {uploadingHero ? "Uploading..." : "Upload Image"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={uploadHero}
+                    disabled={uploadingHero}
+                    className="sr-only"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, hero_image_url: "" })}
+                  className="text-xs text-cream/60 hover:text-gold transition-colors"
+                >
+                  Use default image
+                </button>
+                <span className="text-xs text-cream/40">JPG, PNG or WebP · up to 8 MB</span>
+              </div>
+              <p className="text-xs text-cream/45">Upload a new background and then select Save Settings to publish it on the storefront.</p>
+            </div>
             <Field label="Promo Banner Text" value={form.promo_text} onChange={(v) => setForm({ ...form, promo_text: v })} className="sm:col-span-2" />
             <Field label="Newsletter Text" value={form.newsletter_text} onChange={(v) => setForm({ ...form, newsletter_text: v })} className="sm:col-span-2" />
             <Field label="Brand Story Heading" value={form.brand_story_heading} onChange={(v) => setForm({ ...form, brand_story_heading: v })} className="sm:col-span-2" />
