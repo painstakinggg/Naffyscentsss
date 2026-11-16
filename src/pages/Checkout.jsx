@@ -40,7 +40,19 @@ export default function Checkout() {
   const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
   const logisticsProvider = settings?.logistics_provider || "Josh Logistics";
   const pickupHours = settings?.pickup_hours || "12:00 PM – 5:00 PM";
-  const deliveryFee = 0;
+  const deliveryFee = isPickup ? 0 : deliveryZone === "lagos"
+    ? Number(settings?.delivery_fee_lagos ?? 2500)
+    : deliveryZone === "nationwide"
+      ? Number(settings?.delivery_fee_nationwide ?? 4500)
+      : Number(ilaroMin);
+  const deliveryFeeMin = isPickup ? 0 : deliveryZone === "lagos"
+    ? deliveryFee
+    : deliveryZone === "nationwide"
+      ? deliveryFee
+      : Number(ilaroMin);
+  const deliveryFeeMax = isPickup ? 0 : deliveryZone === "ilaro"
+    ? Number(ilaroMax)
+    : deliveryFee;
   const total = Math.max(0, subtotal - discount + (items.length > 0 ? deliveryFee : 0));
 
   useEffect(() => {
@@ -87,9 +99,9 @@ export default function Checkout() {
           fulfilment_method: isPickup ? "Pickup" : "Logistics Delivery",
           subtotal,
           delivery_fee: deliveryFee,
-          delivery_fee_min: isPickup ? 0 : ilaroMin,
-          delivery_fee_max: isPickup ? 0 : ilaroMax,
-          delivery_info_note: isPickup ? "" : `Delivery within Ilaro: ${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)} via ${logisticsProvider}`,
+          delivery_fee_min: deliveryFeeMin,
+          delivery_fee_max: deliveryFeeMax,
+          delivery_info_note: isPickup ? "" : `Delivery to ${deliveryZone === "lagos" ? "Lagos" : deliveryZone === "nationwide" ? "other states" : "Ilaro and nearby"}: ${formatNaira(deliveryFee)}${deliveryZone === "ilaro" ? ` (estimated range ${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)})` : ""} via ${logisticsProvider}. Final fee confirmed before dispatch.`,
           discount,
           total,
           status: "Awaiting Payment Confirmation",
@@ -235,6 +247,7 @@ export default function Checkout() {
                 {couponMsg && <p className={"text-xs " + (discount > 0 ? "text-emerald-700" : "text-red-600")}>{couponMsg}</p>}
                 <div className="space-y-2 border-t border-stone-200 pt-3 text-sm">
                   <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
+                  {!isPickup && <SummaryRow label="Delivery fee" value={formatNaira(deliveryFee)} />}
                   {discount > 0 && <SummaryRow label="Discount" value={"−" + formatNaira(discount)} green />}
                   <div className="flex justify-between border-t border-stone-200 pt-3 font-bold text-stone-900">
                     <span>Total</span><span className="text-[#762d38]">{formatNaira(total)}</span>
