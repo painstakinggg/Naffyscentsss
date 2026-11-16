@@ -32,8 +32,8 @@ export default function Categories() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent" />
                 <div className="absolute inset-0 flex flex-col justify-end p-6">
-                  <h3 className="font-heading text-2xl text-cream mb-1">{cat.name}</h3>
-                  <p className="text-xs text-cream/60 mb-4 leading-relaxed">{cat.desc}</p>
+                  <h3 className="naffy-category-title font-heading text-2xl mb-1">{cat.name}</h3>
+                  <p className="naffy-category-description text-xs mb-4 leading-relaxed">{cat.desc}</p>
                   <span className="inline-flex items-center gap-2 text-[11px] tracking-luxe-sm text-gold uppercase group-hover:gap-3 transition-all">
                     Explore <ArrowRight size={13} />
                   </span>
