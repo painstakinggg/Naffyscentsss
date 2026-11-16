@@ -23,7 +23,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="pt-[94px] pb-20 min-h-screen">
+    <div className="pt-[106px] pb-20 min-h-screen">
       <div className="max-w-[1200px] mx-auto px-5 sm:px-8">
         <div className="mb-6 text-left">
           <h1 className="text-[18px] font-medium leading-tight text-cream">Cart summary ({itemCount})</h1>
