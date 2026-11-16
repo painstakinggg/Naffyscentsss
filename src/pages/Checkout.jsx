@@ -213,13 +213,13 @@ export default function Checkout() {
     <main className="min-h-screen bg-white px-4 pb-20 pt-24 text-stone-800 sm:px-6 sm:pt-28">
       <div className="mx-auto max-w-xl">
         <form onSubmit={placeOrder} className="space-y-7">
-          <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-7 sm:-mx-6 sm:px-7">
+          <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-3 sm:-mx-6 sm:px-7">
             <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between gap-4 text-left">
-              <span className="flex min-w-0 items-center gap-3 text-[clamp(1.25rem,4.5vw,1.9rem)] font-normal leading-tight text-black">
+              <span className="flex min-w-0 items-center gap-3 text-[28px] font-normal leading-tight text-black">
                 Order summary
                 <ChevronDown size={25} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
               </span>
-              <strong className="shrink-0 text-[clamp(1.35rem,4.8vw,2rem)] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>
+              {!summaryOpen && <strong className="shrink-0 text-[32px] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>}
             </button>
             {summaryOpen ? (
               <div className="space-y-4 rounded-lg bg-[#faf9f6] p-4">
@@ -247,12 +247,7 @@ export default function Checkout() {
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="flex justify-between rounded-lg bg-[#faf9f6] px-4 py-3 text-sm">
-                <span className="text-stone-600">{items.reduce((count, item) => count + item.quantity, 0)} item(s)</span>
-                <strong className="text-stone-900">{formatNaira(total)}</strong>
-              </div>
-            )}
+            ) : null}
           </section>
 
           <section className="space-y-3">
