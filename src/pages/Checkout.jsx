@@ -235,10 +235,10 @@ export default function Checkout() {
           <section className="space-y-4">
             <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Delivery</h2>
             <div className="grid grid-cols-2 gap-1 rounded-[24px] bg-stone-100 p-1.5">
-              <button type="button" onClick={() => setFulfilment("delivery")} aria-pressed={!isPickup} className={"flex min-h-[76px] items-center justify-center gap-2 rounded-[20px] px-3 py-4 text-base font-semibold transition " + (!isPickup ? "bg-white text-stone-950 shadow-sm ring-1 ring-stone-200" : "text-stone-800 hover:bg-white/60")}>
+              <button type="button" onClick={() => setFulfilment("delivery")} aria-pressed={!isPickup} className={"flex min-h-[58px] items-center justify-center gap-2 rounded-[20px] px-3 py-3 text-base font-semibold transition " + (!isPickup ? "bg-white text-stone-950 shadow-sm ring-1 ring-stone-200" : "text-stone-800 hover:bg-white/60")}>
                 <Truck size={21} className="shrink-0 text-stone-950" />Ship
               </button>
-              <button type="button" onClick={() => setFulfilment("pickup")} aria-pressed={isPickup} className={"flex min-h-[76px] items-center justify-center gap-2 rounded-[20px] px-3 py-4 text-base font-semibold transition " + (isPickup ? "bg-white text-stone-950 shadow-sm ring-1 ring-stone-200" : "text-stone-800 hover:bg-white/60")}>
+              <button type="button" onClick={() => setFulfilment("pickup")} aria-pressed={isPickup} className={"flex min-h-[58px] items-center justify-center gap-2 rounded-[20px] px-3 py-3 text-base font-semibold transition " + (isPickup ? "bg-white text-stone-950 shadow-sm ring-1 ring-stone-200" : "text-stone-800 hover:bg-white/60")}>
                 <MapPin size={21} className="shrink-0 text-stone-950" />Pickup
               </button>
             </div>
