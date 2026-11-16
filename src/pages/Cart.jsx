@@ -1,16 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
-import { useStore } from "@/lib/store-context";
 import { formatNaira } from "@/lib/images";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
 
 export default function Cart() {
   const { items, updateQuantity, removeFromCart, subtotal, itemCount } = useCart();
-  const { settings } = useStore();
-  const ilaroMin = settings?.delivery_fee_ilaro_min ?? 1000;
-  const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
-  const logisticsProvider = settings?.logistics_provider || "Josh Logistics";
 
   if (items.length === 0) {
     return (
@@ -77,9 +72,9 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between text-cream/60">
                   <span>Delivery</span>
-                  <span className="text-cream/50 text-right">Ilaro: {formatNaira(ilaroMin)} – {formatNaira(ilaroMax)} via {logisticsProvider}</span>
+                  <span className="text-cream/50 text-right">Calculated at checkout</span>
                 </div>
-                <p className="text-xs text-cream/40 mt-2">Pickup available — ₦0 delivery. Final delivery charge confirmed at checkout.</p>
+                <p className="text-xs text-cream/40 mt-2">Final delivery fees are confirmed at checkout based on your delivery location. Store pickup is available at no delivery charge.</p>
               </div>
               <div className="luxury-line my-5" />
               <div className="flex justify-between mb-6">
