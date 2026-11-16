@@ -84,10 +84,13 @@ export default function AdminSettings() {
             <Field label="Business Hours (physical store)" value={form.business_hours} onChange={(v) => setForm({ ...form, business_hours: v })} className="sm:col-span-2" />
             <Field label="Pickup Hours (online orders)" value={form.pickup_hours} onChange={(v) => setForm({ ...form, pickup_hours: v })} className="sm:col-span-2" />
 
-            <p className="sm:col-span-2 text-[10px] tracking-luxe-sm text-gold uppercase pt-4">Delivery (Ilaro)</p>
+            <p className="sm:col-span-2 text-[10px] tracking-luxe-sm text-gold uppercase pt-4">Delivery Fees</p>
             <Field label="Logistics Provider" value={form.logistics_provider} onChange={(v) => setForm({ ...form, logistics_provider: v })} className="sm:col-span-2" />
             <Field label="Ilaro Delivery Fee Min (₦)" type="number" value={form.delivery_fee_ilaro_min} onChange={(v) => setForm({ ...form, delivery_fee_ilaro_min: Number(v) })} />
             <Field label="Ilaro Delivery Fee Max (₦)" type="number" value={form.delivery_fee_ilaro_max} onChange={(v) => setForm({ ...form, delivery_fee_ilaro_max: Number(v) })} />
+            <p className="sm:col-span-2 text-xs text-cream/50">The Ilaro minimum is added to the order total at checkout. The final delivery charge can be confirmed before dispatch.</p>
+            <Field label="Lagos Delivery Fee (₦)" type="number" value={form.delivery_fee_lagos} onChange={(v) => setForm({ ...form, delivery_fee_lagos: Number(v) })} />
+            <Field label="Other States Delivery Fee (₦)" type="number" value={form.delivery_fee_nationwide} onChange={(v) => setForm({ ...form, delivery_fee_nationwide: Number(v) })} />
             <Field label="Delivery Info Note" value={form.delivery_info_note} onChange={(v) => setForm({ ...form, delivery_info_note: v })} className="sm:col-span-2" />
 
             <p className="sm:col-span-2 text-[10px] tracking-luxe-sm text-gold uppercase pt-4">Payment (Bank Transfer)</p>
