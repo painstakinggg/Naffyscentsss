@@ -433,6 +433,7 @@ function PaymentBrandLogo({ name, src }) {
     <span className="flex h-9 min-w-0 items-center justify-center rounded-md border border-stone-200 bg-white px-1.5 py-1">
       <img src={src} alt={name} title={name} loading="lazy" className="h-5 max-w-full object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
     </span>
+  );
 }
 
 function SummaryRow({ label, value, strong = false, green = false }) {
