@@ -313,34 +313,34 @@ export default function Checkout() {
 
           <section className="space-y-4 border-t border-stone-200 pt-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Payment Method</h2>
-            <div className="space-y-3 rounded-lg border border-stone-200 p-3 sm:p-4">
-              <div className="flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-2" aria-label="Paystack and supported payment brand logos">
+            <div className="ml-auto w-fit max-w-full space-y-3 rounded-lg border border-stone-300 bg-white p-4 sm:p-5">
+              <div className="flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-2" aria-label="Paystack and supported payment brand logos">
                 <span className="flex h-8 shrink-0 items-center gap-1.5 text-xs font-semibold text-stone-900">
                   <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#762d38]/[0.08] text-[#762d38]"><CreditCard size={14} /></span>
                   Paystack
                 </span>
-                <span className="flex h-8 w-9 shrink-0 items-center justify-center" title="Mastercard">
-                  <svg viewBox="0 0 48 32" className="h-6 w-9" role="img" aria-label="Mastercard"><circle cx="18" cy="16" r="11" fill="#EB001B"/><circle cx="30" cy="16" r="11" fill="#F79E1B"/><path d="M24 7.8a11 11 0 0 1 0 16.4 11 11 0 0 1 0-16.4Z" fill="#FF5F00"/></svg>
+                <span className="flex h-8 w-12 shrink-0 items-center justify-center" title="Mastercard">
+                  <img src="https://cdn.simpleicons.org/mastercard/EB001B" alt="Mastercard" className="h-7 w-12 object-contain" loading="eager" />
                 </span>
-                <span className="flex h-8 w-9 shrink-0 items-center justify-center" title="Visa">
-                  <svg viewBox="0 0 48 32" className="h-6 w-9" role="img" aria-label="Visa"><path fill="#1A1F71" d="M4 8h7l4 13 4-13h7l-7 17h-7L4 8Zm21 17 5-17h7l-5 17h-7Zm10-2 3-4c1 1 3 2 5 2 1 0 2-.4 2-1s-1-1-3-2c-3-1-5-2-5-5 0-4 3-6 8-6 3 0 5 .5 7 2l-3 4c-1-1-3-1.5-4-1.5-1 0-2 .3-2 1 0 .5 1 1 3 1.7 3 1.1 5 2.3 5 5.1 0 4-3 6.2-8 6.2-3 0-6-1-8-2.5Z"/></svg>
+                <span className="flex h-8 w-12 shrink-0 items-center justify-center" title="Visa">
+                  <img src="https://cdn.simpleicons.org/visa/1A1F71" alt="Visa" className="h-7 w-12 object-contain" loading="eager" />
                 </span>
-                <span className="flex h-8 w-9 shrink-0 items-center justify-center" title="MTN MoMo">
-                  <svg viewBox="0 0 48 32" className="h-6 w-9" role="img" aria-label="MTN MoMo"><rect x="1" y="3" width="46" height="26" rx="5" fill="#FFCC00"/><path d="M9 21V11h3l4 5 4-5h3v10h-3v-5l-4 4-4-4v5H9Zm17 0V11h3l4 5 4-5h3v10h-3v-5l-4 4-4-4v5h-3Z" fill="#111"/></svg>
+                <span className="flex h-8 w-[76px] shrink-0 items-center justify-center" title="MTN MoMo">
+                  <img src="https://momodeveloper.mtn.com/content/momo_mtnb.png" alt="MTN MoMo" className="h-7 w-[76px] object-contain" loading="eager" />
                 </span>
                 <button type="button" onClick={() => setShowMorePaymentBrands((value) => !value)} aria-expanded={showMorePaymentBrands} aria-label={showMorePaymentBrands ? "Hide additional payment brand logos" : "Show four additional payment brand logos"} className="flex h-7 min-w-8 shrink-0 items-center justify-center rounded-md border border-stone-200 bg-white px-2 text-[11px] font-bold text-stone-700 transition hover:border-stone-400">
                   {showMorePaymentBrands ? "−4" : "+4"}
                 </button>
               </div>
               {showMorePaymentBrands && (
-                <div className="grid grid-cols-4 gap-2 border-t border-stone-100 pt-3" aria-label="Additional payment brand logos">
+                <div className="grid grid-cols-2 gap-3 border-t border-stone-100 pt-3 sm:grid-cols-4" aria-label="Additional payment brand logos">
                   <PaymentBrandLogo name="American Express" src="https://cdn.simpleicons.org/americanexpress/2E77BC" />
                   <PaymentBrandLogo name="PesaPay" src="https://pesapay.com/favicon.ico" />
                   <PaymentBrandLogo name="AirtelTigo Money" src="https://cdn.simpleicons.org/airteltigo/EA1D25" />
                   <PaymentBrandLogo name="Ozow" src="https://cdn.simpleicons.org/ozow/00E587" />
                 </div>
               )}
-              <p className="text-xs leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
+              <p className="max-w-sm text-right text-xs leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
             </div>
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
           </section>
@@ -430,8 +430,8 @@ function SectionHeading({ icon, title, subtitle }) {
 
 function PaymentBrandLogo({ name, src }) {
   return (
-    <span className="flex h-9 min-w-0 items-center justify-center rounded-md border border-stone-200 bg-white px-1.5 py-1">
-      <img src={src} alt={name} title={name} loading="lazy" className="h-5 max-w-full object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+    <span className="flex min-h-12 min-w-0 items-center justify-center rounded-md border border-stone-200 bg-white px-2 py-2">
+      <img src={src} alt={name} title={name} loading="eager" className="h-8 w-full max-w-[112px] object-contain" onError={(event) => { event.currentTarget.style.display = "none"; }} />
     </span>
   );
 }
