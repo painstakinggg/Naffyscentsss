@@ -30,7 +30,7 @@ export default function Categories() {
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent" />
+                <div className="naffy-category-overlay absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/30 to-transparent" />
                 <div className="absolute inset-0 flex flex-col justify-end p-6">
                   <h3 className="naffy-category-title font-heading text-2xl mb-1">{cat.name}</h3>
                   <p className="naffy-category-description text-xs mb-4 leading-relaxed">{cat.desc}</p>
