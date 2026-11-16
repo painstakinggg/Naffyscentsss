@@ -330,7 +330,7 @@ export default function Checkout() {
                   </span>
                 </div>
               </div>
-              <p className="mt-3 text-right text-xs leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
+              <p className="mt-3 text-center text-xs leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
             </div>
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
           </section>
@@ -388,7 +388,7 @@ export default function Checkout() {
             </div>
           </section>
 
-          <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-md bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
             <Lock size={15} />{placing ? "Redirecting to Paystack…" : order ? "Retry Pay Now" : "Pay Now"}
           </button>
           <p className="flex items-center justify-center gap-2 text-[11px] text-stone-500"><Lock size={13} />You’ll be redirected to Paystack to complete your payment. Your order is confirmed only after payment verification.</p>
