@@ -22,6 +22,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import PaystackCallback from './pages/PaystackCallback';
 import Layout from './components/layout/Layout';
 import { CartProvider } from './lib/cart-context';
 import { StoreProvider } from './lib/store-context';
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment/callback" element={<PaystackCallback />} />
               <Route path="/collections" element={<Collections />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
