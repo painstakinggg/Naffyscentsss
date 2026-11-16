@@ -172,13 +172,15 @@ export default function Checkout() {
       <div className="mx-auto max-w-xl">
         <form onSubmit={placeOrder} className="space-y-7">
           <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-6 sm:-mx-6 sm:px-7">
-            <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between gap-4 text-left">
-              <span className="flex min-w-0 items-center gap-2 text-[20px] font-normal leading-tight text-black">
+            <div className="flex w-full items-center justify-between gap-4">
+              <h2 className="flex min-w-0 items-center gap-2 text-[20px] font-normal leading-tight text-black">
                 Order summary
-                <ChevronDown size={20} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
-              </span>
+                <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} aria-label={summaryOpen ? "Collapse order summary" : "Expand order summary"} className="rounded p-0.5">
+                  <ChevronDown size={20} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
+                </button>
+              </h2>
               {!summaryOpen && <strong className="shrink-0 text-[24px] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>}
-            </button>
+            </div>
             {summaryOpen ? (
               <div className="space-y-4 rounded-lg bg-[#faf9f6] p-4">
                 {items.map((item) => (
@@ -317,6 +319,29 @@ export default function Checkout() {
               <p className="text-sm leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
             </div>
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
+          </section>
+
+          <section className="space-y-4 border-t border-stone-200 pt-5">
+            <h2 className="text-[20px] font-semibold leading-tight text-stone-900">Order summary</h2>
+            <div className="space-y-3 rounded-lg border border-stone-200 bg-white p-4 sm:p-5">
+              {items.map((item) => (
+                <div key={"final-" + item.id + "-" + item.size_ml} className="flex items-center justify-between gap-4 border-b border-stone-100 pb-3 last:border-0 last:pb-0">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-stone-800">{item.name}</p>
+                    <p className="text-xs text-stone-500">Qty: {item.quantity}{item.is_bundle ? " · Bundle" : item.size_ml ? " · " + item.size_ml + "ml" : ""}</p>
+                  </div>
+                  <span className="shrink-0 text-sm font-medium text-stone-900">{formatNaira(item.price * item.quantity)}</span>
+                </div>
+              ))}
+              <div className="space-y-2 border-t border-stone-200 pt-3 text-sm">
+                <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
+                <SummaryRow label={isPickup ? "Pickup" : "Delivery fee"} value={isPickup ? "FREE" : formatNaira(deliveryFee)} />
+                {discount > 0 && <SummaryRow label="Discount" value={"−" + formatNaira(discount)} green />}
+                <div className="flex justify-between border-t border-stone-200 pt-3 font-bold text-stone-900">
+                  <span>Total</span><span className="text-[#762d38]">{formatNaira(total)}</span>
+                </div>
+              </div>
+            </div>
           </section>
 
           <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-md bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
