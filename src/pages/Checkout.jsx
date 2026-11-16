@@ -388,7 +388,7 @@ export default function Checkout() {
             </div>
           </section>
 
-          <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-sm bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
             <Lock size={15} />{placing ? "Redirecting to Paystack…" : order ? "Retry Pay Now" : "Pay Now"}
           </button>
           <p className="flex items-center justify-center gap-2 text-[11px] text-stone-500"><Lock size={13} />You’ll be redirected to Paystack to complete your payment. Your order is confirmed only after payment verification.</p>
