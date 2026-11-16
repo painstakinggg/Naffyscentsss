@@ -213,13 +213,13 @@ export default function Checkout() {
     <main className="min-h-screen bg-white px-4 pb-20 pt-24 text-stone-800 sm:px-6 sm:pt-28">
       <div className="mx-auto max-w-xl">
         <form onSubmit={placeOrder} className="space-y-7">
-          <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-3 sm:-mx-6 sm:px-7">
+          <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-6 sm:-mx-6 sm:px-7">
             <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between gap-4 text-left">
-              <span className="flex min-w-0 items-center gap-3 text-[28px] font-normal leading-tight text-black">
+              <span className="flex min-w-0 items-center gap-2 text-[20px] font-normal leading-tight text-black">
                 Order summary
-                <ChevronDown size={25} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
+                <ChevronDown size={20} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
               </span>
-              {!summaryOpen && <strong className="shrink-0 text-[32px] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>}
+              {!summaryOpen && <strong className="shrink-0 text-[24px] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>}
             </button>
             {summaryOpen ? (
               <div className="space-y-4 rounded-lg bg-[#faf9f6] p-4">
