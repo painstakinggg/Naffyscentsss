@@ -399,3 +399,12 @@ body .glass-strong { background: rgba(255, 255, 255, 0.96) !important; }
   .newsletter-brandline { align-items: flex-start; }
   .newsletter-brandline span:last-child { text-align: right; }
 }
+
+/* Category cards: keep the image overlay dark and all card copy white. */
+body .naffy-category-overlay {
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.96) 0%, rgba(10, 10, 10, 0.52) 48%, rgba(10, 10, 10, 0.08) 100%) !important;
+}
+body .naffy-category-title,
+body .naffy-category-description {
+  color: #FFFFFF !important;
+}
