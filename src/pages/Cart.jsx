@@ -23,11 +23,10 @@ export default function Cart() {
   }
 
   return (
-    <div className="pt-28 pb-20 min-h-screen">
+    <div className="pt-[74px] pb-20 min-h-screen">
       <div className="max-w-[1200px] mx-auto px-5 sm:px-8">
-        <div className="text-center mb-10">
-          <p className="text-[11px] tracking-luxe text-gold uppercase mb-3">Shopping Bag</p>
-          <h1 className="font-heading text-4xl text-cream">Your Selection ({itemCount})</h1>
+        <div className="mb-6 text-left">
+          <h1 className="text-[18px] font-medium leading-tight text-cream">Cart summary ({itemCount})</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
