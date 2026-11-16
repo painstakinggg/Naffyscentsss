@@ -17,7 +17,7 @@ export async function onRequestPost({ request, env }) {
     ).bind(orderId).first();
     if (!order || order.payment_status !== "Unpaid") return json({ error: "Order not found or already paid" }, 404);
     const email = String(order.customer_email || "").trim();
-    if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return json({ error: "A valid email address is required for Paystack payment" }, 400);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "A valid email address is required for Paystack payment" }, 400);
 
     const amountKobo = Math.round(Number(order.total) * 100);
     if (!Number.isSafeInteger(amountKobo) || amountKobo < 100) return json({ error: "Invalid payment amount" }, 400);
