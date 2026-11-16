@@ -38,7 +38,6 @@ export default function Checkout() {
   const [paymentProof, setPaymentProof] = useState(null);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
-  const [showMorePaymentBrands, setShowMorePaymentBrands] = useState(false);
 
   const ilaroMin = settings?.delivery_fee_ilaro_min ?? 1000;
   const ilaroMax = settings?.delivery_fee_ilaro_max ?? 2000;
@@ -313,34 +312,25 @@ export default function Checkout() {
 
           <section className="space-y-4 border-t border-stone-200 pt-5">
             <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Payment Method</h2>
-            <div className="ml-auto w-fit max-w-full space-y-3 rounded-lg border border-stone-300 bg-white p-4 sm:p-5">
-              <div className="flex min-w-0 flex-wrap items-center justify-end gap-x-3 gap-y-2" aria-label="Paystack and supported payment brand logos">
-                <span className="flex h-8 shrink-0 items-center gap-1.5 text-xs font-semibold text-stone-900">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#762d38]/[0.08] text-[#762d38]"><CreditCard size={14} /></span>
-                  Paystack
+            <div className="w-full rounded-lg border border-stone-300 bg-white p-3 sm:p-4">
+              <div className="flex w-full min-w-0 items-center justify-between gap-2 sm:gap-3" aria-label="Paystack and supported payment brand logos">
+                <span className="flex min-w-0 flex-1 items-center gap-1.5 text-xs font-semibold text-stone-900 sm:gap-2 sm:text-sm">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#762d38]/[0.08] text-[#762d38]"><CreditCard size={14} /></span>
+                  <span>Paystack</span>
                 </span>
-                <span className="flex h-8 w-12 shrink-0 items-center justify-center" title="Mastercard">
-                  <img src="https://cdn.simpleicons.org/mastercard/EB001B" alt="Mastercard" className="h-7 w-12 object-contain" loading="eager" />
-                </span>
-                <span className="flex h-8 w-12 shrink-0 items-center justify-center" title="Visa">
-                  <img src="https://cdn.simpleicons.org/visa/1A1F71" alt="Visa" className="h-7 w-12 object-contain" loading="eager" />
-                </span>
-                <span className="flex h-8 w-[76px] shrink-0 items-center justify-center" title="MTN MoMo">
-                  <img src="https://momodeveloper.mtn.com/content/momo_mtnb.png" alt="MTN MoMo" className="h-7 w-[76px] object-contain" loading="eager" />
-                </span>
-                <button type="button" onClick={() => setShowMorePaymentBrands((value) => !value)} aria-expanded={showMorePaymentBrands} aria-label={showMorePaymentBrands ? "Hide additional payment brand logos" : "Show four additional payment brand logos"} className="flex h-7 min-w-8 shrink-0 items-center justify-center rounded-md border border-stone-200 bg-white px-2 text-[11px] font-bold text-stone-700 transition hover:border-stone-400">
-                  {showMorePaymentBrands ? "−4" : "+4"}
-                </button>
-              </div>
-              {showMorePaymentBrands && (
-                <div className="grid grid-cols-2 gap-3 border-t border-stone-100 pt-3 sm:grid-cols-4" aria-label="Additional payment brand logos">
-                  <PaymentBrandLogo name="American Express" src="https://cdn.simpleicons.org/americanexpress/2E77BC" />
-                  <PaymentBrandLogo name="PesaPay" src="https://pesapay.com/favicon.ico" />
-                  <PaymentBrandLogo name="AirtelTigo Money" src="https://cdn.simpleicons.org/airteltigo/EA1D25" />
-                  <PaymentBrandLogo name="Ozow" src="https://cdn.simpleicons.org/ozow/00E587" />
+                <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+                  <span className="flex h-10 w-[58px] items-center justify-center rounded-md border border-stone-200 bg-white px-1.5 sm:w-[68px]" title="Mastercard">
+                    <img src="https://cdn.simpleicons.org/mastercard/EB001B" alt="Mastercard" className="h-6 w-full object-contain" loading="eager" />
+                  </span>
+                  <span className="flex h-10 w-[58px] items-center justify-center rounded-md border border-stone-200 bg-white px-1.5 sm:w-[68px]" title="Visa">
+                    <img src="https://cdn.simpleicons.org/visa/1A1F71" alt="Visa" className="h-6 w-full object-contain" loading="eager" />
+                  </span>
+                  <span className="flex h-10 w-[58px] items-center justify-center rounded-md border border-stone-200 bg-white px-1.5 sm:w-[68px]" title="MTN MoMo">
+                    <img src="https://momodeveloper.mtn.com/content/momo_mtnb.png" alt="MTN MoMo" className="h-6 w-full object-contain" loading="eager" />
+                  </span>
                 </div>
-              )}
-              <p className="max-w-sm text-right text-xs leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
+              </div>
+              <p className="mt-3 text-right text-xs leading-relaxed text-stone-600">Pay securely by card, bank transfer, USSD or other payment methods available through Paystack. Payment is confirmed automatically after server-side verification.</p>
             </div>
             <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
           </section>
