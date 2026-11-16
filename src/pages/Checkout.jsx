@@ -169,7 +169,7 @@ export default function Checkout() {
   };
 
   return (
-    <main className="min-h-screen bg-white px-4 pb-20 pt-16 text-stone-800 sm:px-6 sm:pt-16">
+    <main className="min-h-screen bg-white px-4 pb-20 pt-[74px] text-stone-800 sm:px-6 sm:pt-[74px]">
       <div className="mx-auto max-w-xl">
         <form onSubmit={placeOrder} className="space-y-7">
           <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-6 sm:-mx-6 sm:px-7">
