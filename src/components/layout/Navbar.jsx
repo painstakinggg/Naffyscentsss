@@ -68,11 +68,13 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          headerSolid ? "glass-strong py-3" : "bg-transparent py-5"
+        className={`site-header ${headerSolid ? "is-scrolled" : ""} fixed z-50 transition-all duration-500 ${
+          headerSolid
+            ? "top-3 left-4 right-4 h-[62px] rounded-xl shadow-lg shadow-black/15 glass-strong py-0"
+            : "top-0 left-0 right-0 bg-transparent py-5"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto px-5 sm:px-8 flex items-center justify-between">
+        <div className={`max-w-[1400px] mx-auto px-5 sm:px-8 flex items-center justify-between ${headerSolid ? "h-full" : ""}`}>
           {/* Mobile menu button */}
           <button
             className="lg:hidden text-cream p-1 -ml-1"
