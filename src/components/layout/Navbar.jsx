@@ -146,54 +146,76 @@ export default function Navbar() {
               </button>
 
               {cartOpen && (
-                <div id="mini-cart" className="absolute right-0 top-full mt-5 w-[min(92vw,380px)] max-h-[min(70vh,560px)] overflow-y-auto glass-strong border border-gold/20 rounded-2xl shadow-2xl shadow-black/40 p-4 sm:p-5 text-left animate-fade-in">
-                  <div className="flex items-center justify-between border-b border-gold/15 pb-3 mb-3">
-                    <h2 className="font-heading text-lg text-cream">Your Shopping Bag <span className="text-cream/45 text-sm">({itemCount})</span></h2>
-                    <button type="button" onClick={() => setCartOpen(false)} className="text-cream/55 hover:text-gold" aria-label="Close shopping bag">
-                      <X size={18} />
-                    </button>
-                  </div>
-
-                  {items.length === 0 ? (
-                    <div className="py-8 text-center">
-                      <ShoppingBag size={25} className="text-gold mx-auto mb-3" strokeWidth={1.3} />
-                      <p className="text-sm text-cream/65">Your shopping bag is empty.</p>
-                      <Link to="/shop" onClick={() => setCartOpen(false)} className="inline-block mt-4 text-xs uppercase tracking-luxe-sm text-gold hover:text-gold-light">Explore fragrances</Link>
+                <div className="fixed inset-0 z-[60]">
+                  <button
+                    type="button"
+                    className="absolute inset-0 bg-obsidian/85 backdrop-blur-sm"
+                    onClick={() => setCartOpen(false)}
+                    aria-label="Close shopping bag"
+                  />
+                  <aside
+                    id="mini-cart"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Your shopping bag"
+                    className="absolute top-0 right-0 bottom-0 flex flex-col w-[88%] max-w-md bg-obsidian-soft border-l border-gold/20 shadow-2xl shadow-black/40 transition-transform duration-500 animate-fade-in"
+                  >
+                    <div className="flex items-center justify-between px-6 py-5 border-b border-gold/10">
+                      <div>
+                        <h2 className="font-heading text-xl text-cream">Your Shopping Bag</h2>
+                        <p className="text-sm text-cream/65 mt-1">{itemCount} {itemCount === 1 ? "item" : "items"} in your bag</p>
+                      </div>
+                      <button type="button" onClick={() => setCartOpen(false)} className="text-cream/70 hover:text-gold p-2" aria-label="Close shopping bag">
+                        <X size={22} strokeWidth={1.5} />
+                      </button>
                     </div>
-                  ) : (
-                    <>
-                      <div className="space-y-4">
-                        {items.map((item) => (
-                          <div key={`${item.id}-${item.size_ml}`} className="flex gap-3">
-                            <Link to={`/product/${item.id}`} onClick={() => setCartOpen(false)} className="w-16 h-20 shrink-0 bg-obsidian-soft overflow-hidden rounded-md">
-                              {item.image ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={17} className="text-gold/60" /></div>}
-                            </Link>
-                            <div className="min-w-0 flex-1">
-                              <Link to={`/product/${item.id}`} onClick={() => setCartOpen(false)} className="block font-heading text-sm text-cream hover:text-gold truncate">{item.name}</Link>
-                              <p className="text-[11px] text-cream/40 mt-0.5">{item.is_bundle ? "Curated Bundle" : `${item.size_ml}ml`}</p>
-                              <p className="text-sm text-gold mt-1">{formatNaira(item.price)}</p>
-                              <div className="flex items-center justify-between mt-2">
-                                <div className="flex items-center border border-gold/20 rounded">
-                                  <button type="button" onClick={() => updateQuantity(item.id, item.size_ml, item.quantity - 1)} disabled={item.quantity <= 1} className="w-7 h-7 flex items-center justify-center text-cream/70 hover:text-gold disabled:opacity-30" aria-label={`Decrease quantity of ${item.name}`}><Minus size={11} /></button>
-                                  <span className="w-7 text-center text-xs text-cream">{item.quantity}</span>
-                                  <button type="button" onClick={() => updateQuantity(item.id, item.size_ml, item.quantity + 1)} className="w-7 h-7 flex items-center justify-center text-cream/70 hover:text-gold" aria-label={`Increase quantity of ${item.name}`}><Plus size={11} /></button>
+
+                    {items.length === 0 ? (
+                      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+                        <ShoppingBag size={30} className="text-gold mb-4" strokeWidth={1.3} />
+                        <p className="font-heading text-lg text-cream">Your bag is empty</p>
+                        <p className="text-sm text-cream/65 mt-2">Discover a fragrance and add it to your bag.</p>
+                        <Link to="/shop" onClick={() => setCartOpen(false)} className="mt-6 inline-flex items-center justify-center border border-gold/50 text-gold hover:bg-gold/10 px-6 py-3 text-xs font-semibold uppercase tracking-luxe-sm">Explore fragrances</Link>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex-1 overflow-y-auto px-6 py-5">
+                          <div className="space-y-5">
+                            {items.map((item) => (
+                              <div key={`${item.id}-${item.size_ml}`} className="flex gap-4 pb-5 border-b border-gold/10">
+                                <Link to={`/product/${item.id}`} onClick={() => setCartOpen(false)} className="w-20 h-24 shrink-0 bg-obsidian overflow-hidden rounded-md">
+                                  {item.image ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={18} className="text-gold/60" /></div>}
+                                </Link>
+                                <div className="min-w-0 flex-1">
+                                  <Link to={`/product/${item.id}`} onClick={() => setCartOpen(false)} className="block font-heading text-base leading-snug text-cream hover:text-gold">{item.name}</Link>
+                                  <p className="text-sm text-cream/65 mt-1">{item.is_bundle ? "Curated Bundle" : `${item.size_ml}ml`}</p>
+                                  <p className="text-base font-semibold text-gold mt-2">{formatNaira(item.price)}</p>
+                                  <div className="flex items-center justify-between gap-2 mt-3">
+                                    <div className="flex items-center border border-gold/25 rounded">
+                                      <button type="button" onClick={() => updateQuantity(item.id, item.size_ml, item.quantity - 1)} disabled={item.quantity <= 1} className="w-8 h-8 flex items-center justify-center text-cream/80 hover:text-gold disabled:opacity-30" aria-label={`Decrease quantity of ${item.name}`}><Minus size={12} /></button>
+                                      <span className="w-8 text-center text-sm font-medium text-cream">{item.quantity}</span>
+                                      <button type="button" onClick={() => updateQuantity(item.id, item.size_ml, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center text-cream/80 hover:text-gold" aria-label={`Increase quantity of ${item.name}`}><Plus size={12} /></button>
+                                    </div>
+                                    <button type="button" onClick={() => removeFromCart(item.id, item.size_ml)} className="text-cream/65 hover:text-garnet flex items-center gap-1.5 text-xs"><Trash2 size={13} /> Remove</button>
+                                  </div>
                                 </div>
-                                <button type="button" onClick={() => removeFromCart(item.id, item.size_ml)} className="text-cream/40 hover:text-garnet flex items-center gap-1 text-[11px]"><Trash2 size={12} /> Remove</button>
                               </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                      <div className="border-t border-gold/15 mt-4 pt-4">
-                        <div className="flex justify-between text-sm mb-4">
-                          <span className="text-cream/65">Subtotal</span>
-                          <span className="text-gold font-medium">{formatNaira(subtotal)}</span>
                         </div>
-                        <Link to="/cart" onClick={() => setCartOpen(false)} className="block w-full text-center border border-gold/40 text-gold hover:bg-gold/10 py-3 text-xs uppercase tracking-luxe-sm transition-colors">View Shopping Bag</Link>
-                        <Link to="/checkout" onClick={() => setCartOpen(false)} className="btn-gold block w-full text-center py-3 mt-2 text-xs uppercase tracking-luxe-sm">Proceed to Checkout</Link>
-                      </div>
-                    </>
-                  )}
+                        <div className="shrink-0 border-t border-gold/15 bg-obsidian/40 px-6 py-5">
+                          <h3 className="font-heading text-base text-cream mb-4">Order Summary</h3>
+                          <div className="flex items-center justify-between gap-4 text-sm">
+                            <span className="text-cream/75">Subtotal ({itemCount} {itemCount === 1 ? "item" : "items"})</span>
+                            <span className="text-gold text-base font-semibold tabular-nums">{formatNaira(subtotal)}</span>
+                          </div>
+                          <p className="text-xs leading-relaxed text-cream/60 mt-2 mb-5">Delivery fees, if applicable, are calculated at checkout.</p>
+                          <Link to="/cart" onClick={() => setCartOpen(false)} className="block w-full text-center border border-gold/50 text-gold hover:bg-gold/10 py-3.5 text-sm font-semibold uppercase tracking-luxe-sm transition-colors">View Shopping Bag</Link>
+                          <Link to="/checkout" onClick={() => setCartOpen(false)} className="btn-gold block w-full text-center py-3.5 mt-3 text-sm font-semibold uppercase tracking-luxe-sm">Proceed to Checkout</Link>
+                        </div>
+                      </>
+                    )}
+                  </aside>
                 </div>
               )}
             </div>
