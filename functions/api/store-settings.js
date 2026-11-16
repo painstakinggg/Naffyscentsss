@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS = {
   payment_instructions: "",
   hero_headline: "SCENT THAT SPEAKS BEFORE YOU DO.",
   hero_subtext: "Discover fragrances crafted to leave a lasting impression.",
+  hero_image_url: "https://i.ibb.co/j97MJYPV/IMG-20260926-WA0010.jpg",
   promo_text: "YOUR SIGNATURE SCENT AWAITS.",
   newsletter_text: "Sign up for new fragrance drops, exclusive offers and curated scent stories.",
   brand_story_heading: "CAPTIVATING SCENTS, UNFORGETTABLE MOMENTS",
@@ -54,7 +55,7 @@ export async function onRequestGet({ env }) {
 }
 
 import { requireAdmin, json } from "./_auth.js";
-const EDITABLE_SETTINGS = ["whatsapp_number","contact_email","instagram_handle","snapchat_handle","tiktok_handle","facebook_handle","store_address","maps_url","business_hours","pickup_hours","logistics_provider","delivery_fee_ilaro_min","delivery_fee_ilaro_max","delivery_info_note","delivery_fee_lagos","delivery_fee_nationwide","bank_name","account_name","account_number","payment_instructions","hero_headline","hero_subtext","promo_text","newsletter_text","brand_story_heading"];
+const EDITABLE_SETTINGS = ["whatsapp_number","contact_email","instagram_handle","snapchat_handle","tiktok_handle","facebook_handle","store_address","maps_url","business_hours","pickup_hours","logistics_provider","delivery_fee_ilaro_min","delivery_fee_ilaro_max","delivery_info_note","delivery_fee_lagos","delivery_fee_nationwide","bank_name","account_name","account_number","payment_instructions","hero_headline","hero_subtext","hero_image_url","promo_text","newsletter_text","brand_story_heading"];
 export async function onRequestPut({request,env}) {
  const gate=await requireAdmin(request,env.DB); if(gate.response)return gate.response;
  let body; try{body=await request.json()}catch{return json({error:"Invalid request"},400)}
