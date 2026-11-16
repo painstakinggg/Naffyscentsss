@@ -220,7 +220,7 @@ export default function Checkout() {
         </header>
 
         <form onSubmit={placeOrder} className="space-y-7">
-          <section className="space-y-3 border-t border-stone-200 pt-5">
+          <section className="space-y-3 pt-5">
             <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between">
               <span className="text-sm font-bold uppercase tracking-wider text-stone-900">Order Summary</span>
               <span className="flex items-center gap-2 text-xs text-stone-500">
