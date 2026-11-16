@@ -268,6 +268,7 @@
 body .bg-obsidian { background-color: #FFFFFF !important; }
 body .bg-obsidian-soft { background-color: #F8F7F5 !important; }
 body [class*="bg-obsidian/"] { background-color: rgba(255, 255, 255, 0.94) !important; }
+body .naffy-cart-backdrop { background-color: rgba(10, 10, 10, 0.78) !important; }
 body [class*="text-cream"] { color: #27211F !important; }
 body .hero-section.bg-obsidian { background-color: #0A0A0A !important; }
 body .hero-section [class*="text-cream"] { color: #F3EDE4 !important; }
