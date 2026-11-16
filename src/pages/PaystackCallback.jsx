@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Check, LoaderCircle, AlertCircle } from "lucide-react";
 import { formatNaira } from "@/lib/images";
+import { useCart } from "@/lib/cart-context";
 
 export default function PaystackCallback() {
   const [params] = useSearchParams();
+  const { clearCart } = useCart();
   const [state, setState] = useState({ loading: true, paid: false, message: "Confirming your payment securely…" });
   const reference = params.get("reference") || "";
 
@@ -23,7 +25,10 @@ export default function PaystackCallback() {
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "We could not verify this payment.");
         if (!data.paid) throw new Error("Payment is not yet confirmed. If you were debited, please contact Naffy Scents.");
-        if (active) setState({ loading: false, paid: true, message: "Your payment has been verified and your order is being processed.", order: data.order });
+        if (active) {
+          clearCart();
+          setState({ loading: false, paid: true, message: "Your payment has been verified and your order is being processed.", order: data.order });
+        }
       })
       .catch((error) => {
         if (active) setState({ loading: false, paid: false, message: error.message || "Payment verification failed." });
