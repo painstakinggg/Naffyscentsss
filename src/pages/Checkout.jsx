@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/lib/cart-context";
 import { useStore } from "@/lib/store-context";
 import { formatNaira } from "@/lib/images";
-import { Check, Lock, Truck, MessageCircle, ShoppingBag, MapPin, CreditCard, ChevronDown } from "lucide-react";
+import { ArrowLeft, Check, Lock, Truck, MessageCircle, ShoppingBag, MapPin, CreditCard, ChevronDown } from "lucide-react";
 import { Image } from "@/components/ui/image";
 
 const NIGERIAN_STATES = [
@@ -27,6 +27,7 @@ export default function Checkout() {
   const isPickup = fulfilment === "pickup";
   const [coupon, setCoupon] = useState("");
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [couponMsg, setCouponMsg] = useState("");
   const [placing, setPlacing] = useState(false);
@@ -197,100 +198,192 @@ export default function Checkout() {
   }
 
   return (
-    <main className="min-h-screen bg-[#faf9f6] pb-20 pt-28 text-stone-800 sm:pt-32">
-      <div className="mx-auto max-w-xl px-4 sm:px-5">
-        <div className="mb-7 text-center">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#762d38]">NAFFY SCENTS</p><h1 className="font-heading text-3xl text-stone-900 sm:text-4xl">Secure checkout</h1><p className="mt-2 text-xs text-stone-500">Complete your details to place your order.</p>
+    <main className="min-h-screen bg-white px-4 pb-20 pt-24 text-stone-800 sm:px-6 sm:pt-28">
+      <div className="mx-auto max-w-xl">
+        <header className="relative mb-7 flex items-center justify-center border-b border-stone-200 pb-5">
+          <button type="button" onClick={() => navigate("/cart")} aria-label="Back to shopping bag" className="absolute left-0 rounded-full p-2 transition hover:bg-stone-100">
+            <ArrowLeft size={20} />
+          </button>
+          <h1 className="text-lg font-bold tracking-tight text-stone-900">Secure Checkout</h1>
+        </header>
 
-        </div>
-
-        <form onSubmit={placeOrder} className="mx-auto max-w-xl space-y-5">
-          <div className="space-y-4">
-            <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
-              <button type="button" onClick={() => setSummaryOpen(v => !v)} className="flex w-full items-center justify-between text-left"><span className="font-heading text-xl text-stone-900">Order summary</span><ChevronDown size={18} className={`transition-transform ${summaryOpen ? "rotate-180" : ""}`} /></button>
-              <p className="mt-1 text-xs text-stone-500">{items.reduce((n, item) => n + item.quantity, 0)} item(s) in your bag</p>
-              {summaryOpen && <div className="my-5 space-y-4">
+        <form onSubmit={placeOrder} className="space-y-7">
+          <section className="space-y-3 border-t border-stone-200 pt-5">
+            <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} className="flex w-full items-center justify-between">
+              <span className="text-sm font-bold uppercase tracking-wider text-stone-900">Order Summary</span>
+              <span className="flex items-center gap-2 text-xs text-stone-500">
+                {summaryOpen ? "Hide details" : "Show details"}
+                <ChevronDown size={19} className={"transition-transform " + (summaryOpen ? "rotate-180" : "")} />
+              </span>
+            </button>
+            {summaryOpen ? (
+              <div className="space-y-4 rounded-lg bg-[#faf9f6] p-4">
                 {items.map((item) => (
-                  <div key={`${item.id}-${item.size_ml}`} className="flex gap-3">
-                    <div className="h-16 w-14 shrink-0 overflow-hidden rounded-md bg-[#f3f0ec]"><img src={item.image} alt={item.name} className="h-full w-full object-cover" /></div>
-                    <div className="min-w-0 flex-1"><p className="line-clamp-2 text-xs font-medium text-stone-800">{item.name}</p><p className="mt-1 text-[11px] text-stone-500">{item.is_bundle ? "Bundle" : `${item.size_ml}ml`} · Qty {item.quantity}</p></div>
-                    <span className="whitespace-nowrap text-xs font-medium text-stone-700">{formatNaira(item.price * item.quantity)}</span>
+                  <div key={item.id + "-" + item.size_ml} className="flex items-center gap-3 border-b border-stone-200 pb-3">
+                    <img src={item.image} alt={item.name} className="h-14 w-14 rounded object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-stone-800">{item.name}</p>
+                      <p className="text-xs text-stone-500">Qty: {item.quantity}{item.is_bundle ? " · Bundle" : item.size_ml ? " · " + item.size_ml + "ml" : ""}</p>
+                    </div>
+                    <strong className="whitespace-nowrap text-sm text-stone-900">{formatNaira(item.price * item.quantity)}</strong>
                   </div>
                 ))}
-              </div>}
-              <div className="flex gap-2">
-                <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-200 px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
-                <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] hover:bg-[#762d38]/5">Apply</button>
+                <div className="flex gap-2">
+                  <input value={coupon} onChange={(e) => setCoupon(e.target.value)} placeholder="Discount code" aria-label="Discount code" className="min-w-0 flex-1 rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-800 outline-none focus:border-[#762d38]" />
+                  <button type="button" onClick={applyCoupon} className="rounded-md border border-[#762d38] px-3 py-2.5 text-xs font-semibold text-[#762d38] transition hover:bg-[#762d38]/5">Apply</button>
+                </div>
+                {couponMsg && <p className={"text-xs " + (discount > 0 ? "text-emerald-700" : "text-red-600")}>{couponMsg}</p>}
+                <div className="space-y-2 border-t border-stone-200 pt-3 text-sm">
+                  <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
+                  {discount > 0 && <SummaryRow label="Discount" value={"−" + formatNaira(discount)} green />}
+                  <SummaryRow label={isPickup ? "Pickup fee" : "Delivery estimate"} value={isPickup ? "Free" : deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : formatNaira(ilaroMin) + " – " + formatNaira(ilaroMax)} />
+                  <div className="flex justify-between border-t border-stone-200 pt-3 font-bold text-stone-900">
+                    <span>Total</span><span className="text-[#762d38]">{formatNaira(total)}</span>
+                  </div>
+                </div>
+                {!isPickup && <p className="text-[11px] leading-5 text-stone-500">Final delivery fee is confirmed with you. It is not included in the order total above.</p>}
               </div>
-              {couponMsg && <p className={`mt-2 text-xs ${discount > 0 ? "text-emerald-700" : "text-red-600"}`}>{couponMsg}</p>}
-              <div className="my-5 border-t border-stone-200" />
-              <SummaryRow label="Subtotal" value={formatNaira(subtotal)} />
-              {discount > 0 && <SummaryRow label="Discount" value={`−${formatNaira(discount)}`} green />}
-              <div className="mt-2"><SummaryRow label={isPickup ? "Pickup" : "Delivery estimate"} value={isPickup ? "Free" : deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`} /></div>
-              {!isPickup && <p className="mt-2 text-[11px] leading-5 text-stone-400">Final delivery fee is confirmed with you. It is not included in the order total below.</p>}
-              <div className="my-5 border-t border-stone-200" />
-              <div className="mb-5 flex items-center justify-between"><span className="text-sm font-semibold text-stone-800">Total</span><span className="text-xl font-semibold text-[#762d38]">{formatNaira(total)}</span></div>
-            </div>
-            <p className="mt-4 text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={`https://wa.me/${settings?.whatsapp_number || "2348103173658"}`} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
-          </div>
+            ) : (
+              <div className="flex justify-between rounded-lg bg-[#faf9f6] px-4 py-3 text-sm">
+                <span className="text-stone-600">{items.reduce((count, item) => count + item.quantity, 0)} item(s)</span>
+                <strong className="text-stone-900">{formatNaira(total)}</strong>
+              </div>
+            )}
+          </section>
 
-          <div className="space-y-5">
-            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
-              <SectionHeading icon={<ShoppingBag size={17} />} title="Your details" subtitle="Tell us who we’re preparing this order for." />
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div><label className={labelClass}>First name <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} autoComplete="given-name" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="First name" /></div>
-                <div><label className={labelClass}>Last name *</label><input className={inputClass} autoComplete="family-name" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} placeholder="Last name" required /></div>
-                <div><label className={labelClass}>Phone number *</label><input className={inputClass} type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g. 080…" required /></div>
-                {!isPickup && <div className="sm:col-span-2"><label className={labelClass}>Email address <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" /></div>}
+          <section className="space-y-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Contact</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className={labelClass}>First name <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
+                <input className={inputClass} autoComplete="given-name" value={form.first_name} onChange={(e) => setForm({ ...form, first_name: e.target.value })} placeholder="First name" />
               </div>
-            </section>
-
-            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
-              <SectionHeading icon={<MapPin size={17} />} title="Delivery or pickup" subtitle="Choose how you’d like to receive your fragrance." />
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <button type="button" onClick={() => setFulfilment("delivery")} className={`rounded-lg border p-4 text-left transition ${!isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]/10" : "border-stone-200 hover:border-stone-400"}`}>
-                  <span className="mb-2 flex items-center justify-between text-sm font-semibold text-stone-800">Home delivery <Truck size={17} className="text-[#762d38]" /></span>
-                  <span className="block text-xs leading-5 text-stone-500">Via {logisticsProvider}. Estimated fee: {deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : `${formatNaira(ilaroMin)} – ${formatNaira(ilaroMax)}`}.</span>
-                </button>
-                <button type="button" onClick={() => setFulfilment("pickup")} className={`rounded-lg border p-4 text-left transition ${isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]/10" : "border-stone-200 hover:border-stone-400"}`}>
-                  <span className="mb-2 flex items-center justify-between text-sm font-semibold text-stone-800">Store pickup <ShoppingBag size={17} className="text-[#762d38]" /></span>
-                  <span className="block text-xs leading-5 text-stone-500">Collect in Ilaro. Pickup hours: {pickupHours}.</span>
-                </button>
+              <div>
+                <label className={labelClass}>Last name *</label>
+                <input className={inputClass} autoComplete="family-name" value={form.last_name} onChange={(e) => setForm({ ...form, last_name: e.target.value })} placeholder="Last name" required />
               </div>
-              {isPickup ? (
-                <div className="mt-4 rounded-lg bg-[#faf9f6] p-4 text-xs leading-5 text-stone-600">Collection address: <strong className="font-semibold text-stone-800">{settings?.store_address || "Ilaro, Ogun State"}</strong><br />Pickup hours: {pickupHours}</div>
-              ) : (
-                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="sm:col-span-2"><label className={labelClass}>Street address *</label><input className={inputClass} autoComplete="street-address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="House number, street and area" required /></div>
-                  <div><label className={labelClass}>Apartment / suite <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} value={form.apartment} onChange={(e) => setForm({ ...form, apartment: e.target.value })} placeholder="Apartment, suite or unit" /></div>
-                  <div><label className={labelClass}>Postal code <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label><input className={inputClass} value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} placeholder="Postal code" /></div>
-                  <div><label className={labelClass}>City *</label><input className={inputClass} autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Your city" required /></div>
-                  <div><label className={labelClass}>State *</label><select className={inputClass} autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })}>{NIGERIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}</select></div>
-                  <div className="sm:col-span-2"><label className={labelClass}>Delivery destination</label><select className={inputClass} value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)}><option value="ilaro">Ilaro and nearby</option><option value="lagos">Lagos</option><option value="nationwide">Other states (nationwide)</option></select></div>
+              <div>
+                <label className={labelClass}>Phone number *</label>
+                <input className={inputClass} type="tel" autoComplete="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g. 080…" required />
+              </div>
+              {!isPickup && (
+                <div>
+                  <label className={labelClass}>Email address <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
+                  <input className={inputClass} type="email" autoComplete="email" value={form.customer_email} onChange={(e) => setForm({ ...form, customer_email: e.target.value })} placeholder="you@example.com" />
                 </div>
               )}
-            </section>
+            </div>
+          </section>
 
-            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
-              <SectionHeading icon={<MessageCircle size={17} />} title="Customer instructions" subtitle="Optional notes for preparing or delivering your order." />
-              <textarea className={inputClass + " min-h-[96px] resize-y"} value={form.customer_instructions} onChange={(e) => setForm({ ...form, customer_instructions: e.target.value })} placeholder="Add any special instructions…" />
-            </section>
+          <section className="space-y-4">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Delivery</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <button type="button" onClick={() => setFulfilment("delivery")} className={"flex items-center justify-between gap-2 rounded-lg border p-3 text-left transition sm:p-4 " + (!isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]" : "border-stone-200 hover:border-stone-400")}>
+                <span className="flex items-center gap-2 text-sm font-semibold text-stone-800"><Truck size={19} className="shrink-0 text-[#762d38]" />Home delivery</span>
+                <span className={"h-4 w-4 shrink-0 rounded-full border " + (!isPickup ? "border-4 border-[#762d38]" : "border-stone-300")} />
+              </button>
+              <button type="button" onClick={() => setFulfilment("pickup")} className={"flex items-center justify-between gap-2 rounded-lg border p-3 text-left transition sm:p-4 " + (isPickup ? "border-[#762d38] bg-[#762d38]/[0.04] ring-1 ring-[#762d38]" : "border-stone-200 hover:border-stone-400")}>
+                <span className="flex items-center gap-2 text-sm font-semibold text-stone-800"><ShoppingBag size={19} className="shrink-0 text-[#762d38]" />Store pickup</span>
+                <span className={"h-4 w-4 shrink-0 rounded-full border " + (isPickup ? "border-4 border-[#762d38]" : "border-stone-300")} />
+              </button>
+            </div>
 
-            <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7">
-              <SectionHeading icon={<CreditCard size={17} />} title="Payment method" subtitle="Your payment instructions will be shown after your order is placed." />
-              <div className="flex items-start gap-3 rounded-lg border border-stone-200 bg-[#faf9f6] p-4">
-                <div className="mt-0.5 rounded-md bg-white p-2 text-[#762d38]"><Lock size={17} /></div>
-                <div><p className="text-sm font-semibold text-stone-800">Bank transfer</p><p className="mt-1 text-xs leading-5 text-stone-500">We’ll display the store’s bank details and your exact order amount on the confirmation screen. Payment is verified by our team before processing.</p></div>
+            {isPickup ? (
+              <div className="space-y-3 rounded-lg border border-stone-200 p-4 sm:p-5">
+                <div className="flex items-center gap-2 text-sm font-semibold text-stone-900"><MapPin size={17} className="text-[#762d38]" />Pickup address</div>
+                <p className="text-sm leading-relaxed text-stone-600">{settings?.store_address || "Ilaro, Ogun State"}</p>
+                <div className="border-t border-stone-200 pt-3">
+                  <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-stone-600">Pickup hours</span>
+                  <p className="text-sm text-stone-700">{pickupHours}</p>
+                </div>
               </div>
-              <p className="mt-3 text-[11px] text-stone-400">Your personal details are used only to process and fulfil your order.</p>
-            </section>
-            <button type="submit" disabled={placing || items.length === 0} className="w-full rounded-md bg-[#762d38] px-5 py-4 text-sm font-semibold tracking-wide text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">{placing ? "Placing your order…" : "Place order"}</button>
-            <p className="flex items-center justify-center gap-2 text-[11px] text-stone-400"><Lock size={12} /> Secure order submission</p>
-          </div>
+            ) : (
+              <div className="space-y-4 rounded-lg border border-stone-200 p-4 sm:p-5">
+                <div>
+                  <label className={labelClass}>Street address *</label>
+                  <input className={inputClass} autoComplete="street-address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="House number, street and area" required />
+                </div>
+                <div>
+                  <label className={labelClass}>Apartment, suite, etc. <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
+                  <input className={inputClass} value={form.apartment} onChange={(e) => setForm({ ...form, apartment: e.target.value })} placeholder="Apartment, suite or unit" />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelClass}>City *</label>
+                    <input className={inputClass} autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Your city" required />
+                  </div>
+                  <div>
+                    <label className={labelClass}>State *</label>
+                    <select className={inputClass} autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} required>
+                      {NIGERIAN_STATES.map((state) => <option key={state} value={state}>{state}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelClass}>Postal code <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></label>
+                    <input className={inputClass} value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} placeholder="Postal code" />
+                  </div>
+                  <div>
+                    <label className={labelClass}>Delivery destination</label>
+                    <select className={inputClass} value={deliveryZone} onChange={(e) => setDeliveryZone(e.target.value)}>
+                      <option value="ilaro">Ilaro and nearby</option>
+                      <option value="lagos">Lagos</option>
+                      <option value="nationwide">Other states (nationwide)</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="border-t border-stone-200 pt-4">
+                  <p className="text-xs leading-5 text-stone-500">Delivery via {logisticsProvider}. Estimated fee: {deliveryZone === "lagos" ? formatNaira(settings?.delivery_fee_lagos ?? 2500) : deliveryZone === "nationwide" ? formatNaira(settings?.delivery_fee_nationwide ?? 4500) : formatNaira(ilaroMin) + " – " + formatNaira(ilaroMax)}. Final fee is confirmed before dispatch.</p>
+                </div>
+              </div>
+            )}
+          </section>
 
+          <section className="border-t border-stone-200 pt-5">
+            <button type="button" onClick={() => setInstructionsOpen((value) => !value)} aria-expanded={instructionsOpen} className="flex w-full items-center justify-between py-1">
+              <span className="text-sm font-bold uppercase tracking-wider text-stone-900">Customer instructions <span className="font-normal normal-case tracking-normal text-stone-400">(optional)</span></span>
+              <ChevronDown size={19} className={"text-stone-500 transition-transform " + (instructionsOpen ? "rotate-180" : "")} />
+            </button>
+            {instructionsOpen && (
+              <div className="pt-3">
+                <textarea className={inputClass + " min-h-24 resize-y"} value={form.customer_instructions} onChange={(e) => setForm({ ...form, customer_instructions: e.target.value })} placeholder="Add any instructions for your order (optional)" />
+              </div>
+            )}
+          </section>
 
+          <section className="space-y-4 border-t border-stone-200 pt-5">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-stone-900">Payment Method</h2>
+            <div className="space-y-3 rounded-lg border border-stone-200 p-4 sm:p-5">
+              <div className="flex items-center gap-3 text-sm font-semibold text-stone-900">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#762d38]/[0.08] text-[#762d38]"><CreditCard size={17} /></span>
+                Bank Transfer
+              </div>
+              <p className="text-sm leading-relaxed text-stone-600">Your payment instructions and the exact order amount will be displayed after your order is placed. Payment is verified by our team before processing.</p>
+            </div>
+            <p className="text-[11px] leading-5 text-stone-500">Your personal details are used only to process and fulfil your order.</p>
+          </section>
+
+          <button type="submit" disabled={placing || items.length === 0} className="flex w-full items-center justify-center gap-2 rounded-md bg-[#762d38] px-5 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#60232d] disabled:cursor-not-allowed disabled:opacity-50">
+            <Lock size={15} />{placing ? "Placing your order…" : "Place order"}
+          </button>
+          <p className="flex items-center justify-center gap-2 text-[11px] text-stone-500"><Lock size={13} />Your order will remain awaiting payment until the transfer is verified.</p>
+          <p className="text-center text-[11px] text-stone-400">Need help? <a className="font-medium text-[#762d38] underline underline-offset-2" href={"https://wa.me/" + (settings?.whatsapp_number || "2348103173658")} target="_blank" rel="noopener noreferrer">Contact us on WhatsApp</a></p>
         </form>
       </div>
+
+      {placing && (
+        <div className="fixed inset-0 z-[100] flex min-h-screen items-center justify-center bg-black/55 px-5 py-8 text-center backdrop-blur-[2px]" role="status" aria-live="polite">
+          <div className="flex w-full max-w-sm flex-col items-center rounded-2xl border border-white/10 bg-[#211719] px-7 py-9 text-white shadow-2xl">
+            <div className="mb-8 text-xs font-semibold tracking-[0.35em] text-[#f0d8c9]">NAFFY SCENTS</div>
+            <div className="mb-7 flex h-20 w-20 items-center justify-center rounded-full border-2 border-[#f0d8c9]/25">
+              <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#f0d8c9] border-t-transparent" />
+            </div>
+            <p className="text-sm font-medium tracking-[0.16em]">PROCESSING YOUR ORDER</p>
+            <p className="mt-3 text-xs leading-relaxed text-white/65">Please wait while we securely submit your order.</p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
