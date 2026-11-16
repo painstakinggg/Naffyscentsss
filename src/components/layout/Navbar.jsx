@@ -188,11 +188,9 @@ export default function Navbar() {
             <Link to="/account" className="font-heading text-2xl text-cream/90 hover:text-gold transition-colors py-3 border-b border-gold/5">
               Account
             </Link>
-            {isAdmin && (
-              <Link to="/admin" className="font-heading text-2xl text-gold hover:text-gold-light transition-colors py-3 border-b border-gold/5">
-                Admin
-              </Link>
-            )}
+            <Link to="/admin" className="font-heading text-2xl text-gold hover:text-gold-light transition-colors py-3 border-b border-gold/5">
+              Admin
+            </Link>
           </nav>
           <div className="px-6 mt-4">
             <p className="text-[11px] tracking-luxe-sm text-gold uppercase mb-2">Concierge</p>
