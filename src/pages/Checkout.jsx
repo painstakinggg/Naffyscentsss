@@ -173,12 +173,12 @@ export default function Checkout() {
         <form onSubmit={placeOrder} className="space-y-7">
           <section className="-mx-4 space-y-3 bg-[#f5f5f5] px-6 py-6 sm:-mx-6 sm:px-7">
             <div className="flex w-full items-center justify-between gap-4">
-              <h2 className="flex min-w-0 items-center gap-2 text-[20px] font-normal leading-tight text-black">
+              <h4 className="flex min-w-0 items-center gap-2 text-[20px] font-normal leading-tight text-black">
                 Order summary
                 <button type="button" onClick={() => setSummaryOpen((value) => !value)} aria-expanded={summaryOpen} aria-label={summaryOpen ? "Collapse order summary" : "Expand order summary"} className="rounded p-0.5">
                   <ChevronDown size={20} className={"shrink-0 transition-transform " + (summaryOpen ? "rotate-180" : "")} />
                 </button>
-              </h2>
+              </h4>
               {!summaryOpen && <strong className="shrink-0 text-[24px] font-bold leading-tight tracking-tight text-black">{formatNaira(total)}</strong>}
             </div>
             {summaryOpen ? (
