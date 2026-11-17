@@ -15,7 +15,7 @@ const NAV_LINKS = [
   { label: "Contact", path: "/contact" },
 ];
 
-const LOGO_URL = "/favicon.svg";
+const LOGO_URL = "/naffy-scents-logo.svg";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
