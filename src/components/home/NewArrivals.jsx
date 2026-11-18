@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import ProductCard from "@/components/product/ProductCard";
+import ProductCarousel from "@/components/product/ProductCarousel";
 import { useProducts } from "@/hooks/useProducts";
 import Reveal from "@/components/ui/Reveal";
 import { HOMEPAGE_COLLECTIONS } from "@/data/homepageCollections";
@@ -29,13 +29,7 @@ export default function NewArrivals() {
         </div>
       ) : display.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-6">
-            {display.map((product, index) => (
-              <Reveal key={product.id} delay={index * 0.08}>
-                <ProductCard product={product} badge="New Arrival" />
-              </Reveal>
-            ))}
-          </div>
+          <ProductCarousel products={display} badge="New Arrival" />
           <div className="text-center mt-12">
             <Link to="/shop?collection=new-arrivals" className="btn-outline-gold inline-flex items-center justify-center gap-3 px-8 py-4 text-[11px] tracking-luxe-sm uppercase">
               View All New Arrivals <ArrowRight size={14} />
