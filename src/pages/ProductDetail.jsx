@@ -5,7 +5,7 @@ import { useQuickView } from "@/lib/quickview-context";
 import { formatNaira } from "@/lib/images";
 import StarRating from "@/components/product/StarRating";
 import ProductCard from "@/components/product/ProductCard";
-import { Minus, Plus, ShoppingBag, Heart, Truck, Shield, RefreshCw, ChevronRight } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Heart, Truck, Shield, RefreshCw, ChevronRight, ChevronDown } from "lucide-react";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -17,6 +17,7 @@ export default function ProductDetail() {
   const [size, setSize] = useState(100);
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState("notes");
+  const [openFaq, setOpenFaq] = useState(0);
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
   const navigate = useNavigate();
 
@@ -261,6 +262,60 @@ export default function ProductDetail() {
           </div>
         </div>
       )}
+
+      {/* Product FAQs */}
+      <section className="max-w-[1000px] mx-auto px-5 sm:px-8 mt-24 mb-8" aria-labelledby="product-faq-heading">
+        <div className="text-center mb-10">
+          <p className="text-[10px] tracking-luxe-sm text-gold uppercase mb-3">Need to know more?</p>
+          <h2 id="product-faq-heading" className="font-heading text-3xl sm:text-4xl text-cream">Frequently Asked Questions</h2>
+          <p className="text-sm text-cream/45 mt-3">A few helpful answers before you make your choice.</p>
+        </div>
+        <div className="border-t border-gold/15">
+          {[
+            {
+              question: "Are Naffy Scents fragrances authentic?",
+              answer: "Yes. We stand behind the authenticity of the fragrances we offer. If you have a question about a specific product, please contact our team before placing your order."
+            },
+            {
+              question: "How do I choose the right fragrance?",
+              answer: "Start with the fragrance family and notes listed on this page. Top notes are the first impression, heart notes form the fragrance's character, and base notes are the deeper notes that develop over time. Personal preference and skin chemistry can affect how a fragrance smells on you."
+            },
+            {
+              question: "What sizes are available?",
+              answer: product.is_bundle
+                ? "This item is a bundle. Its included products and quantities are listed in the What's Inside The Bundle section above."
+                : "Available size options for this fragrance are shown above the quantity selector. Choose your preferred size before adding the item to your cart."
+            },
+            {
+              question: "Do you deliver across Nigeria?",
+              answer: "We offer nationwide delivery. Delivery availability and timing can vary by destination; the available details will be provided during the order process."
+            },
+            {
+              question: "How long will the fragrance last?",
+              answer: "Wear time varies by fragrance concentration, the notes in the composition, skin type, weather, and how the fragrance is applied. We recommend reviewing the product details and fragrance notes for this specific scent."
+            },
+            {
+              question: "Can I return or exchange an order?",
+              answer: "Return and exchange eligibility depends on the order and applicable store policy. Please contact our team for guidance before sending an item back."
+            }
+          ].map((faq, index) => (
+            <div key={faq.question} className="border-b border-gold/15">
+              <button
+                type="button"
+                onClick={() => setOpenFaq((current) => current === index ? -1 : index)}
+                className="w-full flex items-center justify-between gap-5 py-5 text-left group"
+                aria-expanded={openFaq === index}
+              >
+                <span className="text-sm sm:text-base text-cream/85 group-hover:text-gold transition-colors">{faq.question}</span>
+                <ChevronDown size={18} className={`shrink-0 text-gold transition-transform duration-300 ${openFaq === index ? "rotate-180" : ""}`} />
+              </button>
+              {openFaq === index && (
+                <p className="text-sm text-cream/55 leading-relaxed pb-5 pr-8">{faq.answer}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
