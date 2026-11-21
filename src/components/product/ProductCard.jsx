@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, ArrowRight } from "lucide-react";
+import { Heart, ShoppingBag, Zap, Eye } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import { formatNaira } from "@/lib/images";
 import StarRating from "./StarRating";
@@ -102,38 +102,43 @@ export default function ProductCard({ product, badge }) {
           {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-obsidian-soft" />}
         </Link>
 
-        {/* Shopping actions: hover on desktop, tap-to-reveal on touch screens */}
+        {/* Compact icon actions: hover on desktop, tap-to-reveal on touch screens */}
         <div
-          className={`absolute inset-0 z-10 flex flex-col justify-center gap-2.5 bg-obsidian/75 p-3 backdrop-blur-[2px] transition-opacity duration-300 ${actionsOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
+          className={`absolute inset-0 z-10 flex items-center justify-center bg-obsidian/75 p-3 backdrop-blur-[2px] transition-opacity duration-300 ${actionsOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"}`}
           onClick={() => setActionsOpen(false)}
           aria-hidden={!actionsOpen}
         >
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            disabled={!product.available}
-            className="btn-gold flex w-full items-center justify-center gap-2 py-3 text-[10px] uppercase tracking-luxe-sm disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <ShoppingBag size={14} strokeWidth={1.5} />
-            Add to Cart
-          </button>
-          <button
-            type="button"
-            onClick={handleBuyNow}
-            disabled={!product.available}
-            className="flex w-full items-center justify-center gap-2 border border-gold bg-gold/10 py-3 text-[10px] uppercase tracking-luxe-sm text-cream transition-colors hover:bg-gold hover:text-obsidian disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            Buy Now
-            <ArrowRight size={14} strokeWidth={1.5} />
-          </button>
-          <Link
-            to={`/product/${product.id}`}
-            onClick={(event) => event.stopPropagation()}
-            className="flex w-full items-center justify-center gap-2 border border-cream/50 bg-obsidian/20 py-3 text-[10px] uppercase tracking-luxe-sm text-cream transition-colors hover:border-gold hover:text-gold"
-          >
-            View Details
-            <ArrowRight size={14} strokeWidth={1.5} />
-          </Link>
+          <div className="grid w-full max-w-[180px] grid-cols-3 gap-3">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={!product.available}
+              aria-label="Add to cart"
+              title="Add to cart"
+              className="flex aspect-square items-center justify-center rounded-full border border-gold/70 bg-obsidian/40 text-cream transition-all duration-200 hover:border-gold hover:bg-gold hover:text-obsidian disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ShoppingBag size={19} strokeWidth={1.6} />
+            </button>
+            <button
+              type="button"
+              onClick={handleBuyNow}
+              disabled={!product.available}
+              aria-label="Buy now"
+              title="Buy now"
+              className="flex aspect-square items-center justify-center rounded-full border border-gold bg-gold text-obsidian transition-all duration-200 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Zap size={19} strokeWidth={1.7} />
+            </button>
+            <Link
+              to={`/product/${product.id}`}
+              onClick={(event) => event.stopPropagation()}
+              aria-label="View details"
+              title="View details"
+              className="flex aspect-square items-center justify-center rounded-full border border-cream/50 bg-obsidian/40 text-cream transition-all duration-200 hover:border-gold hover:bg-gold hover:text-obsidian"
+            >
+              <Eye size={19} strokeWidth={1.6} />
+            </Link>
+          </div>
         </div>
       </div>
 
