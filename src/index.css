@@ -410,23 +410,13 @@ body .naffy-category-description {
 
 
 
-/* Move each complete product card horizontally in sequence.
-   The slide itself moves, so its image, title, details and price travel together.
-   Only the active card moves; the Swiper track, card width and configured gaps stay unchanged. */
-@keyframes naffy-card-sequence {
-  0%, 3% { transform: translateX(0); }
-  9%, 12% { transform: translateX(calc(-100% - 24px)); }
-  13% { transform: translateX(calc(100% + 24px)); }
-  19%, 100% { transform: translateX(0); }
-}
-.naffy-product-swiper .swiper-slide {
-  animation: naffy-card-sequence 16s ease-in-out infinite;
-  animation-delay: calc(var(--naffy-sequence-index, 0) * -4s);
-  will-change: transform;
+/* Continuous product-card flow is driven by Swiper autoplay.
+   Keep each slide/card intact; do not animate individual cards independently. */
+.naffy-product-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .naffy-product-swiper .swiper-slide {
-    animation: none;
-    will-change: auto;
+  .naffy-product-swiper .swiper-wrapper {
+    transition-timing-function: ease !important;
   }
 }
