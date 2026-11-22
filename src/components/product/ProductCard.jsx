@@ -90,14 +90,14 @@ export default function ProductCard({ product, badge }) {
           <Heart size={15} strokeWidth={1.5} className={wished ? "fill-gold text-gold" : "text-cream/70"} />
         </button>
 
-        {/* Image: tap once on touch screens to reveal the shopping actions */}
+        {/* Product image animates automatically; touch tap still reveals the existing shopping actions */}
         <Link to={`/product/${product.id}`} onClick={handleImageClick} className="block h-full w-full">
           <img
             src={product.images?.[0]}
             alt={product.name}
             loading="lazy"
             onLoad={() => setImgLoaded(true)}
-            className={`h-full w-full object-cover transition-all duration-700 group-hover:scale-105 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+            className={`naffy-product-image-motion h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           />
           {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-obsidian-soft" />}
         </Link>
