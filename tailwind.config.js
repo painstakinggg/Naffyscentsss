@@ -75,9 +75,9 @@ module.exports = {
   			}
   		},
   		fontFamily: {
-  			heading: ['Cormorant Garamond', 'ui-serif', 'Georgia', 'serif'],
-  			body: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-  			display: ['Tenor Sans', 'ui-sans-serif', 'sans-serif'],
+  			heading: ['Noto Sans JP', 'Noto Sans Japanese', 'sans-serif'],
+  			body: ['Noto Sans JP', 'Noto Sans Japanese', 'sans-serif'],
+  			display: ['Noto Sans JP', 'Noto Sans Japanese', 'sans-serif'],
   			mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
   		},
   		keyframes: {
