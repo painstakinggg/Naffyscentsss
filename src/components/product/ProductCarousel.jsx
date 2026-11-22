@@ -1,6 +1,6 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import ProductCard from "./ProductCard";
@@ -8,10 +8,19 @@ import ProductCard from "./ProductCard";
 export default function ProductCarousel({ products, badge }) {
   if (!products?.length) return null;
 
+  // Repeat the curated set so the four-card homepage collections can loop
+  // smoothly on desktop without changing each card's dimensions or spacing.
+  const carouselProducts = Array.from({ length: 3 }, (_, cycle) =>
+    products.map((product) => ({ product, key: `${product.id}-${cycle}` }))
+  ).flat();
+
   return (
     <>
       <style>{`
         .naffy-product-swiper { padding: 0 2px 2.75rem; }
+        .naffy-product-swiper .swiper-wrapper {
+          transition-timing-function: linear !important;
+        }
         .naffy-product-swiper .swiper-button-prev,
         .naffy-product-swiper .swiper-button-next {
           top: auto;
@@ -33,11 +42,24 @@ export default function ProductCarousel({ products, badge }) {
           .naffy-product-swiper .swiper-button-prev,
           .naffy-product-swiper .swiper-button-next { display: none; }
         }
+        @media (prefers-reduced-motion: reduce) {
+          .naffy-product-swiper .swiper-wrapper {
+            transition-timing-function: ease !important;
+          }
+        }
       `}</style>
       <Swiper
         className="naffy-product-swiper"
-        modules={[Navigation]}
+        modules={[Autoplay, Navigation]}
         navigation
+        autoplay={{
+          delay: 0,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        speed={5000}
+        loop
+        loopAdditionalSlides={products.length}
         watchOverflow
         grabCursor
         spaceBetween={14}
@@ -47,8 +69,8 @@ export default function ProductCarousel({ products, badge }) {
           1024: { slidesPerView: 4, spaceBetween: 24 },
         }}
       >
-        {products.map((product) => (
-          <SwiperSlide key={product.id} className="!h-auto">
+        {carouselProducts.map(({ product, key }) => (
+          <SwiperSlide key={key} className="!h-auto">
             <ProductCard
               product={product}
               badge={typeof badge === "function" ? badge(product) : badge}
