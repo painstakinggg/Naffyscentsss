@@ -61,8 +61,12 @@ export default function ProductCarousel({ products, badge }) {
           1024: { slidesPerView: 4, spaceBetween: 24 },
         }}
       >
-        {products.map((product) => (
-          <SwiperSlide key={product.id} className="!h-auto">
+        {products.map((product, index) => (
+          <SwiperSlide
+            key={product.id}
+            className="!h-auto"
+            style={{ "--naffy-sequence-index": index % 4 }}
+          >
             <ProductCard
               product={product}
               badge={typeof badge === "function" ? badge(product) : badge}
