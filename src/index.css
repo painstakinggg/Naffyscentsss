@@ -407,3 +407,22 @@ body .naffy-category-title,
 body .naffy-category-description {
   color: #FFFFFF !important;
 }
+
+
+/* Subtle automatic breathing motion for product-card images */
+@keyframes naffy-image-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+.naffy-product-image-motion {
+  animation: naffy-image-breathe 8s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .naffy-product-image-motion {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+}
