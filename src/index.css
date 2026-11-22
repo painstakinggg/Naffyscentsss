@@ -412,10 +412,10 @@ body .naffy-category-description {
 /* Subtle automatic breathing motion for product-card images */
 @keyframes naffy-image-breathe {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.035); }
+  50% { transform: scale(1.06); }
 }
 .naffy-product-image-motion {
-  animation: naffy-image-breathe 8s ease-in-out infinite;
+  animation: naffy-image-breathe 5s ease-in-out infinite;
   transform-origin: center;
   will-change: transform;
 }
