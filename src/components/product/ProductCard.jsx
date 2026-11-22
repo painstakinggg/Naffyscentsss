@@ -54,7 +54,7 @@ export default function ProductCard({ product, badge }) {
   };
 
   return (
-    <div className="naffy-product-card-motion group relative flex h-full flex-col" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className="group relative flex h-full flex-col" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className="relative aspect-[3/4] overflow-hidden bg-obsidian-soft">
         {/* Product badges */}
         <div className="absolute left-3 top-3 z-20 flex flex-col gap-1.5">
@@ -99,7 +99,7 @@ export default function ProductCard({ product, badge }) {
             onLoad={() => setImgLoaded(true)}
             className={`h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           />
-          {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-obsidian-soft" />}
+          {!imgLoaded && <div className="absolute inset-0 bg-obsidian-soft" />}
         </Link>
 
         {/* Compact icon actions: hover on desktop, tap-to-reveal on touch screens */}

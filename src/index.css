@@ -59,7 +59,7 @@
     --destructive-foreground: 39 53% 85%;
     --border: 0 30% 28%;
     --input: 0 0% 14%;
-    --ring: 0 39% 47%;
+    --ring: 0 30% 28%;
   }
 }
 
@@ -327,7 +327,7 @@ body .glass-strong { background: rgba(255, 255, 255, 0.96) !important; }
 }
 .newsletter-submit:hover { background: #FFF3E9; transform: translateY(-1px); }
 .newsletter-success {
-  color: #FFF9F4;
+  color: #57413A;
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.24);
 }
@@ -406,17 +406,4 @@ body .naffy-category-overlay {
 body .naffy-category-title,
 body .naffy-category-description {
   color: #FFFFFF !important;
-}
-
-
-
-/* Continuous product-card flow is driven by Swiper autoplay.
-   Keep each slide/card intact; do not animate individual cards independently. */
-.naffy-product-swiper .swiper-wrapper {
-  transition-timing-function: linear !important;
-}
-@media (prefers-reduced-motion: reduce) {
-  .naffy-product-swiper .swiper-wrapper {
-    transition-timing-function: ease !important;
-  }
 }
