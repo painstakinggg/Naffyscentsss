@@ -410,16 +410,17 @@ body .naffy-category-description {
 
 
 
-/* Move the complete product card as one independent unit */
-@keyframes naffy-card-float {
-  0%, 100% { top: 0; }
-  50% { top: -7px; }
+/* Move each complete product card gently side to side as an independent unit */
+@keyframes naffy-card-drift {
+  0%, 100% { left: 0; }
+  25% { left: 5px; }
+  75% { left: -5px; }
 }
 .naffy-product-card-motion {
   position: relative;
-  top: 0;
-  animation: naffy-card-float 4.8s ease-in-out infinite;
-  will-change: top;
+  left: 0;
+  animation: naffy-card-drift 5.6s ease-in-out infinite;
+  will-change: left;
 }
 .naffy-product-card-motion:nth-child(6n+2),
 .naffy-product-swiper .swiper-slide:nth-child(6n+2) .naffy-product-card-motion { animation-delay: -1.1s; }
@@ -432,5 +433,5 @@ body .naffy-category-description {
 .naffy-product-card-motion:nth-child(6n),
 .naffy-product-swiper .swiper-slide:nth-child(6n) .naffy-product-card-motion { animation-delay: -1.8s; }
 @media (prefers-reduced-motion: reduce) {
-  .naffy-product-card-motion { animation: none; top: 0; will-change: auto; }
+  .naffy-product-card-motion { animation: none; left: 0; will-change: auto; }
 }
