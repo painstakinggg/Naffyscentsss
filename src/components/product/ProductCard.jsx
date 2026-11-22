@@ -54,7 +54,7 @@ export default function ProductCard({ product, badge }) {
   };
 
   return (
-    <div className="group relative flex h-full flex-col" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div className="naffy-product-card-motion group relative flex h-full flex-col" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <div className="relative aspect-[3/4] overflow-hidden bg-obsidian-soft">
         {/* Product badges */}
         <div className="absolute left-3 top-3 z-20 flex flex-col gap-1.5">
@@ -90,14 +90,14 @@ export default function ProductCard({ product, badge }) {
           <Heart size={15} strokeWidth={1.5} className={wished ? "fill-gold text-gold" : "text-cream/70"} />
         </button>
 
-        {/* Product image animates automatically; touch tap still reveals the existing shopping actions */}
+        {/* Product image remains static; touch tap reveals the existing shopping actions */}
         <Link to={`/product/${product.id}`} onClick={handleImageClick} className="block h-full w-full">
           <img
             src={product.images?.[0]}
             alt={product.name}
             loading="lazy"
             onLoad={() => setImgLoaded(true)}
-            className={`naffy-product-image-motion h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+            className={`h-full w-full object-cover transition-opacity duration-700 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           />
           {!imgLoaded && <div className="absolute inset-0 animate-pulse bg-obsidian-soft" />}
         </Link>
