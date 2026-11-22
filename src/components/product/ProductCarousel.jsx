@@ -1,6 +1,6 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import ProductCard from "./ProductCard";
@@ -8,8 +8,8 @@ import ProductCard from "./ProductCard";
 export default function ProductCarousel({ products, badge }) {
   if (!products?.length) return null;
 
-  // Repeat the curated set so the four-card homepage collections can loop
-  // smoothly on desktop without changing each card's dimensions or spacing.
+  // Repeat the collection so autoplay can flow continuously without a visible
+  // reset, including when a homepage collection contains only a few products.
   const carouselProducts = Array.from({ length: 3 }, (_, cycle) =>
     products.map((product) => ({ product, key: `${product.id}-${cycle}` }))
   ).flat();
@@ -50,23 +50,26 @@ export default function ProductCarousel({ products, badge }) {
       `}</style>
       <Swiper
         className="naffy-product-swiper"
-        modules={[Navigation]}
+        modules={[Autoplay, Navigation]}
         navigation
+        loop
+        speed={6000}
+        autoplay={{
+          delay: 0,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
         watchOverflow
         grabCursor
-        spaceBetween={14}
+        spaceBetween={16}
         slidesPerView={2.12}
         breakpoints={{
-          640: { slidesPerView: 3, spaceBetween: 20 },
-          1024: { slidesPerView: 4, spaceBetween: 24 },
+          640: { slidesPerView: 3, spaceBetween: 22 },
+          1024: { slidesPerView: 4, spaceBetween: 26 },
         }}
       >
-        {products.map((product, index) => (
-          <SwiperSlide
-            key={product.id}
-            className="!h-auto"
-            style={{ "--naffy-sequence-index": index % 4 }}
-          >
+        {carouselProducts.map(({ product, key }) => (
+          <SwiperSlide key={key} className="!h-auto">
             <ProductCard
               product={product}
               badge={typeof badge === "function" ? badge(product) : badge}
