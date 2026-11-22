@@ -1,6 +1,6 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import ProductCard from "./ProductCard";
@@ -50,16 +50,8 @@ export default function ProductCarousel({ products, badge }) {
       `}</style>
       <Swiper
         className="naffy-product-swiper"
-        modules={[Autoplay, Navigation]}
+        modules={[Navigation]}
         navigation
-        autoplay={{
-          delay: 0,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-        }}
-        speed={5000}
-        loop
-        loopAdditionalSlides={products.length}
         watchOverflow
         grabCursor
         spaceBetween={14}
@@ -69,8 +61,8 @@ export default function ProductCarousel({ products, badge }) {
           1024: { slidesPerView: 4, spaceBetween: 24 },
         }}
       >
-        {carouselProducts.map(({ product, key }) => (
-          <SwiperSlide key={key} className="!h-auto">
+        {products.map((product) => (
+          <SwiperSlide key={product.id} className="!h-auto">
             <ProductCard
               product={product}
               badge={typeof badge === "function" ? badge(product) : badge}
